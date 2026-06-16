@@ -59,7 +59,7 @@ datos2<- read.table("C:/Users/100032608/Downloads/t5_p2.txt", header=TRUE)
 datos2
 datos3<- read.table("C:/Users/100032608/Downloads/t5_p3.txt", header=TRUE)
 datos3
-datos5<- read.table("C:/Users/100032608/Downloads/t5_p5.txt", header=TRUE)
+datos5<- read.table("C:/Users/100032608/Downloads/t5_p5.txt", header=T)
 datos5
 
 #RESUMEN NÚMERICO: MINIMO MÁXIMO QUARTILES
@@ -68,7 +68,9 @@ datos5
 
 ### MEDIDS DE POSICIÓN
 summary(datos1$edad)
-
+#rango amplio, media y mediana como cerca entre si pero no tanto
+rango <-max(datos1$edad)-min(datos$edad)
+#la serie de datos incluye valores muy pequeños y grandes el valor del rango es quien sabe
 #Medidas tendencia central y dispersión
 library(Rmisc) # se usa este porque tiene un 
 summarySE(data=datos1, measurevar= "edad")
@@ -91,4 +93,5 @@ shapiro.test(datos1$edad)
 #el valor de p nos dice cual es la probabiliad de obtener un valor como el de 0.88 suponiendo que la hipóteis nula se cumple.
 #entonces como el valor de p es menor al 0.05 entonces significa o poedmos decir que la distribución es significativamente diferente a la distribución normal. 
 
-#Esto se tiene que hacer así de asuichis. 
+#Esto se tiene que hacer así de asuichis con todas las bases de datos, gráficos y numéricos. poner el intervalo de confianza, cuanto vale el mínimo y el máximo
+#para que quede el análisis exploratorio de los datos
