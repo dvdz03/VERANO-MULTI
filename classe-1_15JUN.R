@@ -43,3 +43,10 @@ summarySE(data=datos, measurevar= "NivelesNutritivos", groupvars=c("Region","Var
 
 
 #para distribución de T 
+
+zeta<- qnorm(0.025)
+zeta
+tcero25<- qt(0.025,24)
+xi2cero25<-qchisq(0.025,24)
+tcero25
+xi2cero25
