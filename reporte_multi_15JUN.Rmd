@@ -9,22 +9,35 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Reporte de base de datos de *Valores nutricionales*
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+datos<- read.table("C:/Users/100032608/Downloads/NivelesNutritivos.txt", header=T)
+datos
 ```
 
-## Including Plots
+Primero se carga la base de datos, lo hice copiando desde la ruta de acceso a través de las descargas\
+Todo eso se asignó a un objeto llamado *datos* y posteriormente se cargó para visualizar la base de datos.
 
-You can also embed plots, for example:
+Posteriormente se empezó con el análisis con métodos paramétricos
+```{r}
+boxplot(datos$NivelesNutritivos~datos$Region)
+boxplot(datos$NivelesNutritivos~datos$Variedad)
+```
+Se realizaron tomando en cuenta las variables de *región* y *variedad* en donde se puede observar en la primer variable que las tres regiones son en mayor medida muy similares entre si aunque la región A presenta un poco más de variabilidad. Por otra parte en las variedades parece haber la presencia de 2 grupos: el primero **w y x** y el segundo **y y z**.\
+```{r}
+mediasRegion <- tapply(datos$NivelesNutritivos, datos$Region, summary)
+mediasRegion
+#aquí se ve que la media y la mediana están muy cercanas entre sí, eso quiere decir que las distribuciones están más o menos centradas
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+mediasVariedad <- tapply(datos$NivelesNutritivos, datos$Variedad, summary)
+mediasVariedad
+
+desviacionregion <-tapply(datos$NivelesNutritivos, datos$Region, sd)
+desviacionregion
+desviacionvariedad <-tapply(datos$NivelesNutritivos, datos$Variedad, sd)
+desviacionvariedad
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+En estos análisis se evaluaron las medidas de tendencia central como la media además de la desviación de los datos, lo que nos arroja esto es que las medias y medianas están cercanas entre si, lo que significa que las distribuciones están más o menos centradas, aspecto que se revela en las gráficas de boxplot mostradas anteriormente.\
+Y la desviación estandar aplicada a las variables nos muestra que no hay una gran diferencia en los valores de las mismas por lo que la variabilidad entre estas es poco significativa. 
