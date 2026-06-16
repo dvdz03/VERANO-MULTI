@@ -54,12 +54,11 @@ xi2cero25
 #cargar los datos
 datos1<- read.table("C:/Users/100032608/Downloads/t5_p1.txt", header=TRUE)
 datos1
-#PENDIENTES LOS DE ABAJO
+#PENDIENTES LOS DE ABAJO estos todavía no se hacen alv y no se ocupan
 datos2<- read.table("C:/Users/100032608/Downloads/t5_p2.txt", header=TRUE)
 datos2
 datos3<- read.table("C:/Users/100032608/Downloads/t5_p3.txt", header=TRUE)
 datos3
-#queda pendiente el 5
 datos5<- read.table("C:/Users/100032608/Downloads/t5_p5.txt", header=TRUE)
 datos5
 
