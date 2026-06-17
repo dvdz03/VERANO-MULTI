@@ -5,26 +5,64 @@ date: "2026-06-16"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, include=FALSE}
+datos1<- read.table("C:/Users/100032608/Downloads/t5_p1.txt", header=TRUE)
+datos1
+datos2<- read.table("C:/Users/100032608/Downloads/t5_p2.txt", header=TRUE)
+datos2
+datos3<- read.table("C:/Users/100032608/Downloads/t5_p3.txt", header=TRUE)
+datos3
+datos5<- read.table("C:/Users/100032608/Downloads/t5_p5.txt", header=T)
+datos5
+library(Rmisc)
 ```
 
-## R Markdown
+## Resúmen numérico de las bases de datos "**t5_p1 a t5_p5**"
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Primero se necesitan descargar las bases de datos y cargarlas en el espacio de trabajo para empezar con el análisis exploratorio.\
+Posteriormente con la función de *summary* obtenemos las medidas centrales como media, mediana, primer y tercer cuartil así como los valores máximos y mínimos presentes en los datos dandonos su rango
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+summary(datos1$edad)
+summary(datos2$Edad)
+summary(datos3$TR)
+summary(datos5$Cancer)
 ```
 
-## Including Plots
+Esto nos deja observar que la mediana y la media tienen valores cercanos entre si lo que indica que en mayor o menor medida tienen una distribución simétrica
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+summarySE(data=datos1, measurevar= "edad")
+summarySE(data=datos2, measurevar= "Edad")
+summarySE(data=datos3, measurevar="TR")
+summarySE(data=datos5, measurevar="Cancer")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Con la función de *summarySE* obtenemos las medidas de dispersión como la desviación estándar y el error estándar así como el intervalo de confianza presente en cada una de las bases de datos
+
+## *Resúmen gráfico*
+
+Se realizó un gráfico de boxplot para visualizar la posible distribución de todas las bases datos a través de la mediana
+```{r}
+boxplot (datos1$edad)
+boxplot(datos2$Edad)
+boxplot(datos3$TR)
+boxplot(datos5$Cancer)
+```
+En el caso de las bases de datos **t5_p1, t5_p2 y t5_p3** se observa un sesgo positivo donde la distribución se inclina a la derecha principalmente por un alto número de valores bajos, sin embargo, para la base de datos **t5_p5** esto no sucede porque los valores solamente son 1 y 0.\
+Esto se comprobó al realizar un histograma de las mismas bases
+```{r}
+hist(datos1$edad)
+hist(datos2$Edad)
+hist(datos3$TR)
+hist(datos5$Cancer)
+```
+
+Para finalizar el análisis exploratorio se realizó una prueba de shapiro para evaluar la hipótesis nula sobre la distribución, en donde se observa que la probabilidad de obtener esa distribución es muy baja en todos los casos, lo que significa que no tienen una distribución normal, algo que se observó en los anteriores apartados. 
+```{r}
+shapiro.test(datos1$edad)
+shapiro.test(datos2$Edad)
+shapiro.test(datos3$TR)
+shapiro.test(datos5$Cancer)
+```
+
