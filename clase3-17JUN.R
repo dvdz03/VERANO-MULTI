@@ -31,3 +31,13 @@ p
 v1<-pnorm(2.42,lower.tail=F)
 v1
 #como el valor de p en este caos es menor que 0.05 entonces la hipótesis nula si se rechaza alv y ya 
+
+qt(0.95, 9, lower.tail=T)
+#Ese es el valor crítico
+
+#esto es para buscar la z del otro valor de significancia. 
+qnorm(0.01, lower.tail=F)
+#de esto ya se que es del lado positivo
+qnorm(0.5)#esto es para comprobar lo que dijo moni
+#ya con esto se saca el valor crítico, el z
+
