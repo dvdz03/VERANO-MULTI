@@ -20,3 +20,11 @@ pnorm(150, mean=200, sd=50)
 pnorm(250,mean=200, sd=50, lower.tail=F)
 #es exactamente igual, casi el 16% usan más de 250 m3 de agua
 #esto se puede para cualquier distribución de probabilidad
+
+z<-1.44
+#encontrar la probabilidad de que z sea más grande que ?
+v<-pnorm(1.44,lower.tail=F)
+v
+p<-2*v
+p
+#entonces la probabilidad de obtener una z tan grande como la que obtuvimos es casi del 15%, concluimos que es plausible que la hipótesis nula sea verdadera, no hay evidencia para rechazarla
