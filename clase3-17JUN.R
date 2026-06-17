@@ -41,3 +41,19 @@ qnorm(0.01, lower.tail=F)
 qnorm(0.5)#esto es para comprobar lo que dijo moni
 #ya con esto se saca el valor crítico, el z
 
+#PRUEBAS DE HIPOTESIS PARA LAS BASES DE DATOS
+summary(datos2)
+summarySE(datos2, measurevar="Edad")
+library(Rmisc)
+install.packages("car")
+library(car)
+data("sleep")
+baser<-sleep
+head(baser)
+#prueba levene
+leveneTest(extra~group, data=baser)
+head(datos2)
+
+#es una no paramétrica no depende de la normalidad, prueba de t robusta con variaciones a la normal
+#levene es para la homogeneidad de varianza
+#lo que muestra es el valor de p de 0.62 entonces no hay evidencia para rechazar la hipótesis o sea que no son diferentes
