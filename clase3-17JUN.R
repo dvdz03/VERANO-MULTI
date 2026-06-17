@@ -28,3 +28,6 @@ v
 p<-2*v
 p
 #entonces la probabilidad de obtener una z tan grande como la que obtuvimos es casi del 15%, concluimos que es plausible que la hipótesis nula sea verdadera, no hay evidencia para rechazarla
+v1<-pnorm(2.42,lower.tail=F)
+v1
+#como el valor de p en este caos es menor que 0.05 entonces la hipótesis nula si se rechaza alv y ya 
