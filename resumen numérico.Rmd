@@ -1,5 +1,5 @@
 ---
-title: "resumen numérico de los datos t5_p1"
+title: "resumen numérico de bases de datos"
 author: "David Flores"
 date: "2026-06-16"
 output: pdf_document
