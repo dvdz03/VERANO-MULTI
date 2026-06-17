@@ -1,6 +1,6 @@
 #Clase 17JUN
 rnorm(2)
-#simulación de eso
+#simulación de eso, esto es un ejemplo
 agua<-rnorm(100000, mean=200, sd=50)
 hist(agua, freq = F)
 aguaD<-density(agua)
@@ -53,7 +53,32 @@ head(baser)
 #prueba levene
 leveneTest(extra~group, data=baser)
 head(datos2)
-
+head(datos3)
+head(datos5)
 #es una no paramétrica no depende de la normalidad, prueba de t robusta con variaciones a la normal
 #levene es para la homogeneidad de varianza
 #lo que muestra es el valor de p de 0.62 entonces no hay evidencia para rechazar la hipótesis o sea que no son diferentes
+head(datos2)
+head(datos3)
+head(datos5)
+
+leveneTest(Edad~Grupo, data=datos2)#la variable explicativa cualitativa la hagas factor
+datos2$Grupo<- factor(datos2$Grupo)
+t.test(Edad~Grupo, data=datos2)#se rechaza la hipótesis nula
+
+leveneTest(TR~Tratamiento,data=datos3)# las varianzas son iguales
+datos3$Tratamiento<- factor(datos3$Tratamiento)
+t.test(datos3)
+
+datos5$AEP<-factor(datos5$AEP)
+leveneTest(Cancer~AEP, data=datos5)
+t.test(datos5)
+
+leveneTest(extra~group, data=baser)
+summarySE(datos2,measurevar="Edad")
+shapiro.test(datos2$Edad)#los datos no son normales
+shapiro.test(datos3$TR)#los datos no son normales
+install.packages("nortest")
+library(nortest)
+lillie.test(datos5$Cancer)#el p valor es muy chico por lo que se rechaza la hipótesis nula
+
