@@ -35,3 +35,5 @@ max(datos5$Cancer)
 boxplot(datos5$Cancer)
 hist(datos5$Cancer)
 shapiro.test(datos5$Cancer)
+
+tinytex::install_tinytex()
