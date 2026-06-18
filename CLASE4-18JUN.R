@@ -144,8 +144,15 @@ str(chickwts)
 boxplot(chickwts$weight~chickwts$feed)
 shapiro.test(chickwts$weight)#los datos si son normales
 hist(chickwts$weight)
+#prueba de shapiro a los residuales
+shapiro.test(anova$residuals)
+#concluyo que la distribución observada es muy semejante a la teórica entonces si se distribuyen de manera normal, ahora si la prueba de bartlett
 
-boxplot(weight ~ feed, data = chickwts,
+bartlett.test(chickwts$weight~chickwts$feed)
+
+
+
+boxplot(weight ~ feed, data = chickwts,las=2,
         col = c("green", "red","purple","blue","yellow","gray"),
         ylab = "Peso",
         xlab = "Tipo de alimento",
@@ -158,20 +165,30 @@ boxplot(weight ~ feed, data = chickwts,
 
 # Análisis de varianza
 anova <- aov(weight ~ feed, data = chickwts)
+summary(anova)#esto es para la tabla de anova, tiene un valor más chico de 0.05 y ahora si tukey, post hoc
+
+bartlett.test(chickwts$weight~chickwts$feed)#residuales manera normal, varianzas homogéneas ahora si la tukey
 
 # Pruebas poshoc de Tukey
 tukey <- TukeyHSD(anova)
+tukey
+#la caseina y girasol son iguales, también con harina, todo es con los valores de p ajustados
+
+
 
 # Organización de los trt 
-cld <- multcompLetters4(anova, tukey)
-
-
+cld <- multcompLetters4(anova, tukey)#sacar los grupos 
+cld
+#table with factors and 3rd quantile
+library(dplyr)
 dt <- group_by(chickwts, feed) %>%
   summarise(w=mean(weight), sd = sd(weight)) %>%
   arrange(desc(w))
-
+#es una tabla con medias y desviaciones estandar ordenado por medias,el %>% concatena
+dt
 # Extracción de las letras
 cld <- as.data.frame.list(cld$feed)
+cld
 dt$cld <- cld$Letters
 
 print(dt)
