@@ -117,6 +117,7 @@ text( c(1:nlevels(sustrato)) , a$stats[nrow(a$stats),] + over , LABELS[,1]  , co
 
 
 
+
 #EJERCICIO SCRIPT2
 library(faraway)
 data("rats")
@@ -128,20 +129,33 @@ interaction.plot(poison, treat, time)
 
 friedman.test(time~poison+treat, data = rats)
 
+#era el otro ejercicio el de las ratas no mijo
+library(tidyverse)
+library(ggthemes)
+library(multcompView)
+
 
 #orimero un resumen numérico y gráfico
 chickwts
 summary(chickwts)
 library(Rmisc)
-summarySE(chickwts,measurevar="weight")
+summarySE(chickwts,measurevar="weight",groupvars="feed")
 str(chickwts)
-boxplot(chickwts)
+boxplot(chickwts$weight~chickwts$feed)
 shapiro.test(chickwts$weight)#los datos si son normales
 hist(chickwts$weight)
 
+boxplot(weight ~ feed, data = chickwts,
+        col = c("green", "red","purple","blue","yellow","gray"),
+        ylab = "Peso",
+        xlab = "Tipo de alimento",
+        main = "Diagrama de caja del peso de los pollos por alimento")
+
+
 #los grados de libertad es todos las observaciones menos 1 o sea 70
 #la de los tratamientos es tratamientos -1 o sea 5
-#el error serían 71-6= 
+#el error serían 71-6= 65
+
 # Análisis de varianza
 anova <- aov(weight ~ feed, data = chickwts)
 
