@@ -69,3 +69,104 @@ bartlett.test(respuesta~sustrato)#esta prueba depende de la normalidad
 plot(modelo,which=1)
 plot(modelo,which=2)#si los puntos están cerca de la línea es normal
 
+#COMPARACIÓN DE MEDIAS
+install.packages("multcompView")
+library(multcompView)
+TUK<-TukeyHSD(modelo)#tukey honest significant difference
+TUK
+#nos da las comparaciones de todas, la p ajustada es porque ajustó el alfa porque estamos haciendo 3 comparaciones entonces es necesario un ajuste 
+#ya con eso se puede evaluar
+#arroz vs alpiste son muy diferentes
+#sorgo y alpiste son iguales
+#sorgo y arroz son significativamente diferentes
+plot(TUK)
+#ESTO es de los intervalos de confianza
+#ahí hay uno con 0 y entonces si uno incluye al 0 entonces son iguales estadísticamente
+
+#esto de abajo es como para organizar las cosas, lo hace multcompView, para organizar por media o cosas así 
+#ya con esto ya ilustraste el anova y así bien asuichis
+#es más informativo con los boxplot porque muestras la distribución y tus pruebas post hoc
+#lo más común son gráficos de barras que grafican las medias
+
+generate_label_df <- function(TUK, variable){
+  
+  # Extract labels and factor levels from Tukey post-hoc
+  Tukey.levels <- TUK[[variable]][,4]
+  Tukey.labels <- data.frame(multcompLetters(Tukey.levels)['Letters'])
+  
+  #I need to put the labels in the same order as in the boxplot :
+  Tukey.labels$treatment=rownames(Tukey.labels)
+  Tukey.labels=Tukey.labels[order(Tukey.labels$treatment) , ]
+  return(Tukey.labels)
+}
+
+# Apply the function on my dataset
+LABELS=generate_label_df(TUK , "sustrato")
+
+# A panel of colors to draw each group with the same color :
+my_colors=c( rgb(143,199,74,maxColorValue = 255),rgb(242,104,34,maxColorValue = 255), rgb(111,145,202,maxColorValue = 255),rgb(254,188,18,maxColorValue = 255) , rgb(74,132,54,maxColorValue = 255),rgb(236,33,39,maxColorValue = 255),rgb(165,103,40,maxColorValue = 255))
+
+# Draw the basic boxplot
+a=boxplot(respuesta ~ sustrato ,  col=my_colors[as.numeric(LABELS[,1])] , ylab="valor" , main="")
+
+# I want to write the letter over each box. Over is how high I want to write it.
+over=0.1*max( a$stats[nrow(a$stats),] )
+
+#Add the labels
+text( c(1:nlevels(sustrato)) , a$stats[nrow(a$stats),] + over , LABELS[,1]  , col=my_colors[as.numeric(LABELS[,1])] )
+
+
+
+#EJERCICIO SCRIPT2
+library(faraway)
+data("rats")
+rats
+attach(rats)
+m1<-aov(time~poison*treat, data = rats)
+summary(m1)
+interaction.plot(poison, treat, time)
+
+friedman.test(time~poison+treat, data = rats)
+
+
+#orimero un resumen numérico y gráfico
+chickwts
+summary(chickwts)
+library(Rmisc)
+summarySE(chickwts,measurevar="weight")
+str(chickwts)
+boxplot(chickwts)
+shapiro.test(chickwts$weight)#los datos si son normales
+hist(chickwts$weight)
+
+#los grados de libertad es todos las observaciones menos 1 o sea 70
+#la de los tratamientos es tratamientos -1 o sea 5
+#el error serían 71-6= 
+# Análisis de varianza
+anova <- aov(weight ~ feed, data = chickwts)
+
+# Pruebas poshoc de Tukey
+tukey <- TukeyHSD(anova)
+
+# Organización de los trt 
+cld <- multcompLetters4(anova, tukey)
+
+
+dt <- group_by(chickwts, feed) %>%
+  summarise(w=mean(weight), sd = sd(weight)) %>%
+  arrange(desc(w))
+
+# Extracción de las letras
+cld <- as.data.frame.list(cld$feed)
+dt$cld <- cld$Letters
+
+print(dt)
+
+# Gráfico de medias con grupos
+ggplot(dt, aes(feed, w)) + 
+  geom_bar(stat = "identity", aes(fill = w), show.legend = FALSE) +
+  geom_errorbar(aes(ymin = w-sd, ymax=w+sd), width = 0.2) +
+  labs(x = "Feed Type", y = "Average Weight Gain (g)") +
+  geom_text(aes(label = cld, y = w + sd), vjust = -0.5) +
+  ylim(0,410) +
+  theme_few()
