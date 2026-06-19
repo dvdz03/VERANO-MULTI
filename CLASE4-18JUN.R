@@ -201,3 +201,4 @@ ggplot(dt, aes(feed, w)) +
   geom_text(aes(label = cld, y = w + sd), vjust = -0.5) +
   ylim(0,410) +
   theme_few()
+
