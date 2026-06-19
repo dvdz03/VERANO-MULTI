@@ -55,13 +55,33 @@ ggplot(dt1, aes(tratamiento, w)) +
   geom_errorbar(aes(ymin = w-sd, ymax=w+sd), width = 0.2) +
   labs(x = "tratamientos", y = "Altura promedio") +
   geom_text(aes(label = cld1, y = w + sd), vjust = -0.5) +
-  ylim(0,50) + theme_few()
+  ylim(0,40) + theme_few()
 install.packages("ggthemes")
 library(ggthemes)
 
 
-boxplot(altura ~ tratamiento, data = honguis,las=2,
+boxplot(altura ~ tratamiento, data = honguis,
         col = c("blue","orange","purple"),
         ylab = "altura",
         xlab = "Tratamientuchis",
         main = "mijitin")
+
+
+
+
+#EJERCICIO SCRIPT2
+library(faraway)
+install.packages("faraway")
+data("rats")
+rats
+attach(rats)
+m1<-aov(time~poison*treat, data = rats)
+summary(m1)
+shapiro.test(m1$residuals)
+library(car)
+leveneTest(time~poison)
+leveneTest(time~treat)
+#transforamción no se que poxhox o algo así, se puede hacer a la respuesta
+interaction.plot(poison, treat, time)
+
+friedman.test(time~poison+treat, data = rats)

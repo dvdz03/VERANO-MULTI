@@ -1,0 +1,97 @@
+---
+title: "asuichis de los asix"
+author: "David Flores"
+date: "2026-06-19"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+honguis<-read.table("C:/Users/100032608/Downloads/tratamiento-altura.txt",header=T)
+honguis
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(Rmisc)
+library(multcompView)
+library(magrittr)
+```
+
+## R Markdown
+
+Primero se cargan todos los paquetes necesarios para realizar este análisis a la base de datos, como *dplyr*,*Rmisc* y *multcompView* entre otros y al mismo tiempo se carga la base de datos que se va a analizar.\
+Lo primero que se hace es con la función ***summary*** obtener las medidas de media y mediana así como los valores mínimos y máximos, posteiormente con la función ***summarySE*** se obtienen las medidas de dispersión como la desviación estándar, el error estándar y el intervalo de confianza
+
+```{r}
+summary(honguis)
+summarySE(honguis,measurevar="altura",groupvars="tratamiento")
+```
+
+Se puede observar que las desviaciones en los tratamientos de *Bacillus* y *Pseudomonas* son muy similares entre así al igual que el error estándar y el intervalo de confianza mientras que para *Trichoderma* hay más distancia entre ellos, algo que coincide con los siguientes análisis.
+
+Posteriormente se realizó un análisis gráfico con un boxplot y un histograma para visualizar un aproximado a la distribución de los datos así y se realizó una prueba de shapiro para comprobar que estos tengan o se aproximen a una distribución normal
+
+```{r cars}
+boxplot(altura ~ tratamiento, data = honguis,
+        col = c("blue","orange","purple"),
+        ylab = "altura",
+        xlab = "Tratamientuchis",
+        main = "mijitin")
+hist(honguis$altura)
+```
+
+```{r}
+shapiro.test(honguis$altura)
+```
+
+Para continuar con el análisis, se realizó un ANOVA, donde también se realizó una prueba de shapiro a los residuales de los datos y posteriormente la prueba de Bartlett para comprobar que los residuales tengan o se aproximen a una distribución normal además de que exista una homogeneidad de varianzas
+
+```{r}
+bartlett.test(honguis$altura~honguis$tratamiento)
+anova1<-aov(altura~tratamiento, data=honguis)
+summary(anova1)
+shapiro.test(anova1$residuals)
+```
+
+En la prueba de Bartlett, obtenemos un valor de p de **0.6193** lo cual es mayor al valor de 0.05 lo que significa que la hipótesis de que hay homogeneidad de varianza no se rechaza. La prueba de shapiro de la misma forma, por el valor de p mayor a 0.05 nos indica que efectivamente los residuales del modelo se aproximan a una distribución normal.\
+La tabla del anova nos indica que el resultado es significativo al ser menor que 0.05\
+Posteriormente se hará la prueba de Tukey para observar las interacciones entre los grupos
+
+```{r}
+mijo<-TukeyHSD(anova1)
+mijo
+```
+
+En los resultados de la p ajustada de esta prueba podemos comprobar que los tratamientos de *Pseudomonas* con *Bacillus* son muy parecidos ya que sobrepasan el valor de 0.05 lo que nos hace no rechazar la hipótesis nula mientras que para *Trichoderma* si se rechaza la hipótesis nula debido a que existe una diferencia notable desde el boxplot.
+
+## Agrupación
+
+```{r}
+#cld1 <- multcompLetters4(anova1, mijo)
+#cld1
+#dt1 <- group_by(honguis, tratamiento) %>%
+  #summarise(w=mean(altura), sd = sd(altura)) %>%
+  #arrange(desc(w))
+#print(dt1)
+#cld1 <- as.data.frame.list(cld1$tratamiento)
+#cld1
+#dt1$cld1<-cld1$Letters
+#dt1
+```
+
+Lo que hace este código es ilustrar la agrupación o semejanza de las observaciones, nos arroja 2 grupos: el **a** y el **b** en donde están *Trichoderma* y *Bacillus* con *Pseudomonas* juntos.
+
+Finalmente a través de un boxplot se visualiza los grupos marcados como a y b en los tratamientos
+
+```{r}
+#ggplot(dt1, aes(tratamiento, w)) + 
+ # geom_bar(stat = "identity", aes(fill = w), show.legend = FALSE) +
+#  geom_errorbar(aes(ymin = w-sd, ymax=w+sd), width = 0.2) +
+  #labs(x = "tratamientos", y = "Altura promedio") +
+  #geom_text(aes(label = cld1, y = w + sd), vjust = -0.5) +
+  #ylim(0,40) + theme_few()
+```
+
+aquí los puse comentarios porque no se por qué no me corría el markdown cuando en el script si me corría todo bien y si me salían todas las gráficas y todo, pero bueno lo dejo como comentario para que se vea el código

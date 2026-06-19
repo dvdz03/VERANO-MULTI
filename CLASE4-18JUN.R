@@ -9,7 +9,7 @@ mean(barberia)
 mean(sanguich)
 mean(noticia)
 mean(c(barberia,sanguich,noticia))
-
+ratas
 promediototal
 mean(promediototal)
 sumacuadradotrata<-sum((16.25-69.91)^2,(12.5-69.91)^2,(181-69.91)^2)
