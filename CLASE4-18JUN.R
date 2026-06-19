@@ -130,6 +130,7 @@ interaction.plot(poison, treat, time)
 friedman.test(time~poison+treat, data = rats)
 
 #era el otro ejercicio el de las ratas no mijo
+install.packages("tidyverse")
 library(tidyverse)
 library(ggthemes)
 library(multcompView)
@@ -189,7 +190,7 @@ dt
 # Extracción de las letras
 cld <- as.data.frame.list(cld$feed)
 cld
-dt$
+
 dt$cld <- cld$Letters
 dt
 dt$
