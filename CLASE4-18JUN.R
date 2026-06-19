@@ -189,8 +189,10 @@ dt
 # Extracción de las letras
 cld <- as.data.frame.list(cld$feed)
 cld
+dt$
 dt$cld <- cld$Letters
-
+dt
+dt$
 print(dt)
 
 # Gráfico de medias con grupos
