@@ -15,3 +15,7 @@ anyDuplicated(luzdifusa&luzdirecta)
 intersect(luzdifusa,luzdirecta)
 sample(luzdifusa,18)
 sample(luzdirecta,18)
+tierra<-c(114,111,103,111,116,116,111,106,113,118,112,117,114,116,118,107,119,120,122,117,118,123,117,112,110,122,121,121,116,107,107,112,115,120,117,121)
+length(tierra)
+mean(tierra)
+115*0.30
