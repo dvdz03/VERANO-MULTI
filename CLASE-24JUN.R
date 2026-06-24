@@ -94,3 +94,8 @@ plot(x1,datos0$y,ylim=c(0,70))
 lines(new$x1,yes[,1],col="green",lwd=3)
 lines(new$x1,yes[,2],col="blue",lwd=1)
 lines(new$x1,yes[,3],col="blue",lwd=1)
+
+modelos<-list(modelo00,modepoli,modeloordentres)
+tablamodelos<-aictab(modelos)
+tablamodelos
+anova(modeloordentres,modepoli)
