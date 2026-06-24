@@ -99,3 +99,7 @@ modelos<-list(modelo00,modepoli,modeloordentres)
 tablamodelos<-aictab(modelos)
 tablamodelos
 anova(modeloordentres,modepoli)
+
+#GLM
+#están anovas y regresiones y todo ahí
+

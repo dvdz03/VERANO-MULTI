@@ -60,7 +60,9 @@ view(datos23JUN)
 reporte5<-table.b2
 attach(reporte5)
 str(reporte5)
-view(reporte5)
+reporte5
+is.na(reporte5)#no hay NA
+
 #analisis numerico y grafico
 corres<-cor(datos23JUN,use="pairwise.complete.obs")
 print(corres,digits=2)#LA Y tiene una relación inversamente proporcional, sus valores de la correlación va de -1 a 1. -1 es inversamente proporcional, 1 es directamente proporcional. mientras más cerca esté del 0 más debil es la relación entre las dos variables
