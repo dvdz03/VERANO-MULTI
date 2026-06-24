@@ -61,7 +61,7 @@ reporte5<-table.b2
 attach(reporte5)
 str(reporte5)
 reporte5
-is.na(reporte5)#no hay NA
+
 
 #analisis numerico y grafico
 corres<-cor(datos23JUN,use="pairwise.complete.obs")
@@ -70,8 +70,9 @@ ggpairs(datos23JUN)
 cor.test(y,x4)
 ###############
 corres1<-cor(reporte5,use="pairwise.complete.obs")
-print(corres1)
-
+attach(reporte5)
+print(corres1,digits=2)
+library(GGally)
 ggpairs(reporte5)
 cor.test(y,x2)
 

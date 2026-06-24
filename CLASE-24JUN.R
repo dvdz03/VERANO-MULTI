@@ -57,7 +57,7 @@ lines(new$x1,yes[,1],col="purple",lwd=3)
 lines(new$x1,yes[,2],col="orange",lwd=1)
 lines(new$x1,yes[,3],col="orange",lwd=1)
 scatterplot(datos0$x,datos0$y)
-
+summary(modelo00)
 
 #modelo 2
 x1<-datos0$x-mean(datos0$x)
@@ -103,3 +103,20 @@ anova(modeloordentres,modepoli)
 #GLM
 #están anovas y regresiones y todo ahí
 
+#ejercicio de clase
+#Ajustar un modelo de regresión logístico a la variable de respuesta y. Usar un modelo
+#de regresión lineal simple como estructura del predictor lineal.
+#b. La desviación del modelo ¿indica que es adecuado el modelo logístico de regresión de la
+#parte a?
+#c. Dé una interpretación del parámetro /31en este modelo.
+#d. Desarrollar el predictor lineal para incluir un término cuadrático en la velocidad del
+#blanco. ¿Hay algún indicio de que ese término cuadrático se requiere en el modelo?
+data("p13.1")
+ej24jun<-p13.1
+
+modeloej24jun<-glm(p13.1$y~p13.1$x,family=binomial)
+summary(modeloej24jun)
+#ordenada al origen y estimación de la pendiente de la variable predictora, hace una prueba de z para probar la hipótesis de que las pendientes son igual a 0 y ninguna de las dos es igual a 0.
+#devianza modelo nulo,
+#paquete que desktool
+install.packages("DescTools")
