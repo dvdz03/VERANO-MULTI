@@ -109,3 +109,70 @@ summary(m2)
 # Ejercicio data(twins)
 ?twins
 # https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/j.2044-8295.1966.tb01014.x
+
+#paquete para hacer gráficos y así bontio lindo yasí
+install.packages("factoextra")
+library(factoextra)
+#utilizar los datos iris
+data("iris")
+iris
+#componentes principales solo puedo usar variables numéricas
+# ANÁLISIS DE COMPONENTES PRINCIPALES
+
+library(tidyverse)
+library(factoextra)
+library(GGally)
+
+iris_2<-iris[,1:4]
+view(iris_2)
+especies<-iris$Species
+
+ggpairs(iris)#parece que las variables si tienen relación tal vez no perfecta pero si una relación, hay corrrelaciones significativas 
+#pero lo ideal es que todas lo tengan alv
+
+
+res.pca3 <- prcomp(iris[, -5],  scale = TRUE)
+
+fviz_eig(res.pca3)
+get_eig(res.pca3)
+
+fviz_pca_ind(res.pca3, label="none", habillage=iris$Species,
+             addEllipses=TRUE, ellipse.level=0.95, palette = "Dark2")
+
+
+fviz_pca_var(res.pca3,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+)
+
+fviz_pca_biplot(res.pca3, lrepel=T, habillage=iris$Species, 
+                palette="Dark2",
+                col.var = "#080878") # Variables color
+
+
+# Eigenvalues
+eig.val <- get_eigenvalue(res.pca3)
+eig.val
+
+# Resultado para variables
+res.var <- get_pca_var(res.pca3)
+res.var$coord          # Coordenadas
+res.var$contrib        # Contribución  PCs
+res.var$cos2           # Calidad de la representación 
+
+# Resultados para individuos
+res.ind <- get_pca_ind(res.pca3)
+res.ind$coord          # Coordenadas
+res.ind$contrib        # Contribución  PCs
+res.ind$cos2           # Calidad de la representación
+
+
+#####################
+otroscp<-princomp(iris_2)
+
+
+PC1<-otroscp$scores[,1]
+PC2<-otroscp$scores[,2]
+
+plot(PC1,PC2,pch=16, col=rainbow(3)[especies])
