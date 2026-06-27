@@ -1,0 +1,171 @@
+---
+title: "REPORTE 6"
+author: "David Flores"
+date: "2026-06-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(MPV)
+```
+# **Ejercicios libro de Regresión de Montgomery**
+
+### Ejercicio 1 - p13.2\
+Lo primero que se hace es cargar los datos y asignarlos a un objeto
+
+```{r}
+data("p13.2")
+ej1<-p13.2
+ej1
+```
+Ahora se seguirán las instrucciones del ejercicio a resolver\
+
+- **Ajustar un modelo de regresión logístico** a la variable de respuesta y. Usar un modelo de regresión lineal simple como estructura para el predictor lineal.\
+
+- ¿**Indica** la desviación del modelo que es adecuado el modelo logístico de regresión de la parte a?\
+
+- **Dé una interpretación** del parámetro beta1 en este modelo.\
+
+- **Desarrollar** el predictor lineal para incluir un término cuadrático en el ingreso. ¿Hay algún indicio de que se requiere este término cuadrático en el modelo?
+```{r}
+logistico<-glm(y~x,data=ej1,family="binomial")
+linearsimple<-lm(y~x,data=ej1)
+summary(linearsimple)
+summary(logistico)
+```
+
+Lo que nos indica el resumen del modelo logístico con respecto a la desviación o devianza es que si resulta adecuada ya que hubo una disminución de la misma, aunque esta solo por una diferencia de 5.
+
+El parámetro beta 1 habla de la intersección entre beta 0 y beta 1, es decir, es el cambio promedio en la variable de respuesta *y* con relación a un aumento con la variable de respuesta *x1* manteniendo constantes las otras variables del modelo.
+
+Ahora se realizará el termino cuadrático en el modelo, para determinar si es necesario aplicar este término se realizará un anova comparando ambos modelos 
+```{r}
+xcua<-(ej1$x)^2
+cuadratico<-lm(y~x+xcua,data=ej1)
+summary(cuadratico)
+anova(linearsimple,linearsimple)
+```
+El resultado del anova nos deja observar un valor de p de 0.28 lo cual indica que realmente la adición del término cuadrático no hace significativamente mejor al modelo por lo tanto no resulta necesaria.
+
+### Ejercicio 2 - p13.5
+
+- Ajustar un modelo de regresión logística a los· datos.
+- ¿Indica la desviación o devianza del modelo que es adecuado el modelo de regresión logística de la parte a?
+- Interpretar los coeficientes b1 y b2 del modelo.
+- ¿Cuáles la probabilidad estimada de que una familia con ingresode 45 000 pesos y un coche de 5 años de antigüedad compre un nuevo vehículo durante los siguientes 6 meses?
+- Desarrollar el predictor lineal para incluir un término de interacción. ¿Hay indicios de que se requiera este término en el modelo?
+- Para el modelo de la parte a, calcular los estadísticos para cada parámetro del modelo.
+- Calcular intervalos aproximados de 95% de confianza de los parámetros del modelo, para el modelo logística de regresión de la parte a.
+
+Se cargan los datos antes de empezar con las indicaciones
+```{r}
+data("p13.5")
+ej2<-p13.5
+ej2
+```
+**Posteriormente se hará un modelo logístico para los datos**
+```{r}
+logis1<-glm(y~x1+x2,data=ej2, family="binomial")
+summary(logis1)
+```
+Los resultados de este modelo logístico muestran que la devianza o desviación residual es menor a la desviación nula por lo que nos indica que incluir el ingreso así como la antiegüedad del coche si pudo disminuir el error.
+
+Para los parámetros de beta 1 y beta 2 o x1 y x2, significa que para x1 cada unidad que aumente el ingreso, el logaritmo a facor de comprar un coche cambia un **0.00007382** manteniendo la antigüedad constante, por otro lado para x2 esto significa que por cada año adicional de antigüedad del coche, el logaritmo a favor de la compra de un coche nuevo cambia en **0.987** manteniendo el ingreso constante.\
+Esto se puede observar con los valores obtenidos en la columna del estimado.
+
+Para calcular la probabilidad de que una familia con ingresos de 45 mil y un coche con 5 años de antigüedad compre un coche nuevo se utilizó la función *predict* obteniendo los siguientes resultados.
+```{r}
+nuevocliente<-data.frame(x1=45000,x2=5)
+incisod<-predict(logis1,newdata=nuevocliente,type="response")
+incisod
+```
+Indicando que la probabilidad de que este evento ocurra es del 77.1% aproximadamente.
+
+Ahora se evaluará si es necesario el término de interacción en el modelo
+```{r}
+interaccion<-glm(y~x1*x2,data=ej2,family="binomial")
+summary(interaccion)
+```
+Y se comparará con el otro modelo
+```{r}
+summary(interaccion)
+summary(logis1)
+```
+Esto muestra que a pesar de que la devianza o desviación si baja mucho más que el otro modelo, el valor de p es mayor a 0.05 por lo tanto el término de interacción no aporta un efecto significativo en el resultado del modelo 
+
+Los parámetros del modelo logístico se pueden observar en la columna del valor Z en el resumen del modelo
+```{r}
+summary(logis1)
+```
+
+Para obtener los intervalos de confianza al 95% se hará uso de la función *confint*
+```{r}
+confint(logis1)
+```
+
+
+### Ejercicio 3 - p7.6
+
+- Ajustar un polinomio de segundo orden.
+- Probar la significancia de la regresión.
+- Probar la falta de ajuste y llegar a conclusiones.
+- ¿Contribuye al modelo el término de interacción, en forma significativa?
+- ¿Contribuyen al modelo los términos de segundo orden, en forma significativa? 
+
+Al igual que los demás ejercicios se tienen que cargar los datos y asignar a un objeto.
+```{r}
+data("p7.6")
+ej3<-p7.6
+ej3
+```
+
+Se hará un modelo polinomial para los datos, para esto se hará uso de la función *I* que nos permite aislar los términos cuadráticos para evitar que causen confusión con otros términos presentes en el modelo como *~*.
+```{r}
+poli<-lm(y~x1+x2+I(x1^2)+I(x2^2)+x1:x2,data=ej3)
+summary(poli)
+```
+
+En este modelo, el valor de F obtuvo un valor de p mucho menor a **0.05** por lo que podemos concluir que la regresión si resulta significativa.
+
+Ahora se hará un anova comparando nuestro modelo polinomial con un modelo basado en factores 
+```{r}
+errores<-lm(y~as.factor(x1):as.factor(x2),data=ej3)
+anova(poli,errores)
+```
+
+Para poder determinar si el término de interacción solo hace basta volver a revisar el resumen del modelo que contiene este término
+```{r}
+summary(poli)
+```
+Al revisar la fila de x1:x2 se puede observar que el valor de p es mayor a 0.05 por lo tanto podemos concluuir que la interacción no contribuye de manera significativa
+
+Posteriormente se evaluará la significancia de los términos de segundo orden, para determinar esto se realizó un modelo linear simple para poder compararlo con el polinomial que contenía los términos en segundo orden
+```{r}
+modlinej3<-lm(y~x1+x2,data=ej3)
+anova(modlinej3,poli)
+```
+Los resultados que nos da determinan que el uso de estos términos si es significativo dado que el valor de p es menor a 0.05, pero en realidad es marginalmente significativo ya que la diferencia es solo de 0.01
+
+### Ejercicio 4 - p7.2
+
+- Ajustar un polinomio de segundo orden que exprese la pérdida de peso en función de la cantidad de meses después de haber sido producido.
+- Pruebe la significancia de la regresión.
+- Pruebe la hipótesis H0: /32 = O. Comente la necesidad del término cuadrático en este modelo.
+- ¿Hay riesgos potenciales al extrapolar con este modelo?
+```{r}
+data("p7.2")
+ej4<-p7.2
+ej4
+```
+Se realiza un modelo polinomial con términos de segundo orden
+```{r}
+poli2<-lm(y~x+I(x^2),data=ej4)
+summary(poli2)
+```
+El valor de p de este modelo es mucho menor a 0.05 lo que resulta en que podemos decir que la regresión es significativa, por lo que efectivamente el tiempo transcurrido si ayuda a predecir la pérdida de peso.
+
+El parámetro de beta 2 resulta ser significativa con un valor menor a 0.05
+
+Extrapolar este modelo y basarse en el para predecir los resultados de la pérdida de peso más allá del lapso del experimento porque al tratarse de una curva, esta en algun punto de su trayectoria alcanzará un punto máximo y posteriormente cambiará de dirección. El proceso es asintótico, las personas bajan de peso progresivamente hasta llegar al peso ideal o peso deseado de estas personas, pero al usar una ecuación cuadrática para tratar de predecir este proceso por más tiempo, al tratar de predecir más allá de la duración del experimento los resultados se verán afectados de una manera que no puede ser real biológicamente dado que al comportarse como una curva después de llegar al peso meta las personas reflejarán un aumento de peso incluso más allá del peso inicial o por otra parte el peso puede alcanzar medidas negativas que resultan imposibles
+
+ 

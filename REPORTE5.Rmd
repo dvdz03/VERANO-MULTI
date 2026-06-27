@@ -19,7 +19,8 @@ reporte5<-table.b2
 reporte5
 str(reporte5)
 ```
-Esto nos permitirá visualizar la organización de la base de datos, observar la disposción de variables así como un bosquejo de la naturaleza de los mismos, es decir, determinar si hay NAs saber que variables son numéricas, etc.\
+Esto nos permitirá visualizar la organización de la base de datos, observar la disposción de variables así como un bosquejo de la naturaleza de los mismos, es decir, determinar si hay NAs saber que variables son numéricas, etc.
+
 ## Resumen numérico y gráfico
 ```{r,echo=FALSE}
 corres1<-cor(reporte5,use="pairwise.complete.obs")
