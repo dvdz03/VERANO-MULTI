@@ -22,7 +22,8 @@ plot(logistico)
 cuadratico<-lm(y~x+xcua,data=ej1)
 xcua<-(ej1$x)^2
 summary(cuadratico)
-
+anova(linearsimple,cuadratico)
+anova(cuadratico,linearsimple)
 
 
 #a.Ajustar un modelo de regresión logística a los· datos.
