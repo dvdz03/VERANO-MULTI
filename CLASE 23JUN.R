@@ -70,13 +70,17 @@ ggpairs(datos23JUN)
 cor.test(y,x4)
 ###############
 corres1<-cor(reporte5,use="pairwise.complete.obs")
-attach(reporte5)
 print(corres1,digits=2)
 library(GGally)
 ggpairs(reporte5)
-cor.test(y,x2)
-
-
+cor.test(reporte5$y,reporte5$x2)
+#aquí x2 no tiene correlación con la variable de respuesta 
+MODELOLINEAR<-lm(y~x1+x2+x3+x4+x5,data=reporte5)
+summary(MODELOLINEAR)
+vif(MODELOLINEAR)
+MODELOLINEARSINX5<-lm(y~x1+x2+x3+x4,data=reporte5)
+summary(MODELOLINEARSINX5)
+vif(MODELOLINEARSINX5)
 #apenas se rechaza la hipótesis nula
 #revisar la correlación entre las variables explicativas, si están altamente correlacionadas estamos teniendo información redundante, está pasando la sobrecarga del modelo, sobreajuste.
 #multicolinealidad
