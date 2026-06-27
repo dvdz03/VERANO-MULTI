@@ -12,22 +12,40 @@ library(GGally)
 library(plotly)
 ```
 
-## R Markdown
+## Ejercicio regresión para tabla de datos B3\
+Lo primero que se hace es cargar la base datos y asignarla a un objeto que posteriormente se utilizará en el modelo de regresión linear simple
+```{r}
+reporte5<-table.b2
+reporte5
+str(reporte5)
+```
+Esto nos permitirá visualizar la organización de la base de datos, observar la disposción de variables así como un bosquejo de la naturaleza de los mismos, es decir, determinar si hay NAs saber que variables son numéricas, etc.\
+## Resumen numérico y gráfico
+```{r,echo=FALSE}
+corres1<-cor(reporte5,use="pairwise.complete.obs")
+print(corres1,digits=2)
+ggpairs(reporte5)
+cor.test(reporte5$y,reporte5$x2)
+```
+Posteriormente se realizará un análisis de correlación entre variables generando una matriz de correlaciones que es el objeto **corres1** el cual se dicta la instrucción que nos de sus resultados solo con dos dígitos decimales.\
+Con la función **ggpairs** nos otorga un gráfico que nos da los datos sobre las correlaciones así como la distribución gráfica de los datos para poder observar si existe alguna agrupación evidente o no así como determinar las significancias de cada una de las correlaciones.\
+En este gráfico se observa que la variable x2 tiene un índice de correlación bajo con la variable de respuesta siendo 0.1, además se observa que las variables x3 y x4 tienen un alto índice de correlación con la variable x5 lo que puede indicar multicolinealidad.\
+Para evitar este efecto y que cause confusión en nuestro modelo de regresión linear lo que se hará será eliminar la variable x5 del modelo y seguir. Para fines de este reporte se utilizarán ambos modelos, con y sin x5 para evaluar las diferencias entre ellos y si hay cambios en el ajuste y significancia del mismo.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Modelo de regresión lineal
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+MODELOLINEAR<-lm(y~x1+x2+x3+x4+x5,data=reporte5)
+MODELOLINEARSINX5<-lm(y~x1+x2+x3+x4,data=reporte5)
+summary(MODELOLINEAR)
+summary(MODELOLINEARSINX5)
 
-```{r cars}
-summary(cars)
+```
+Lo que se realizó fue hacer 2 modelos, uno con la variable x5 y otro sin la variable, posteriormente se obtuvo el resumen de los mismos para probar la significancia así como el grado de ajuste del modelo, en ambos casos se obtuvo una R ajustada del 87% con cambios en los decimales, así como un valor de p menor a 0.05.\
+Ahora se usará la función *vif* para determinar la multicolinealidad de las variables en cada modelo
+```{r}
+vif(MODELOLINEAR)
+vif(MODELOLINEARSINX5)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+En el resultado que nos arroja se puede observar que en el primer modelo la variable x5 está correlacionada con otras variables ya que tiene un valor aproximado de **3**, sin embargo al eliminar dicha variable del modelo se puede observar como todas las variables disminuyen su correlación con otras llegando a valores cercanos a 1 que indica que son totalmente independientes.
