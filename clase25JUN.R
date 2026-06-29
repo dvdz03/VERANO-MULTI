@@ -124,6 +124,7 @@ library(factoextra)
 library(GGally)
 
 iris_2<-iris[,1:4]
+iris_2
 view(iris_2)
 especies<-iris$Species
 
