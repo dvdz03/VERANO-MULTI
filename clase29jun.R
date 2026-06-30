@@ -68,6 +68,8 @@ library(EFAtools)
 PARALLEL(pg_especies,eigen_type="SMC")
 N_FACTORS(pg_especies,criteria=c("PARALLEL","EKC","SMT"),
                        eigen_type_other = c("SMC","PCA"))
+N_FACTORS(pg_especies, method = "ULS")
+
 PARALLEL(DOSPERT_sub, eigen_type = "SMC")
 ?PARALLEL
 N_FACTORS(DOSPERT_sub, criteria = c("PARALLEL", "EKC", "SMT"),
