@@ -68,7 +68,7 @@ library(EFAtools)
 PARALLEL(pg_especies,eigen_type="SMC")
 N_FACTORS(pg_especies,criteria=c("PARALLEL","EKC","SMT"),
                        eigen_type_other = c("SMC","PCA"))
-N_FACTORS(pg_especies, method = "ULS")
+N_FACTORS(pg_especies, method = "ULS")#muestra que los datos no son apropiados para el análisis de factores porque el valor de KMO no es alto
 
 PARALLEL(DOSPERT_sub, eigen_type = "SMC")
 ?PARALLEL
@@ -93,10 +93,12 @@ view(Facts)
 vars<-rownames(Facts)
 Facts<-mutate(Facts, vars=vars)
 
-
+install.packages("reshape2")
+library(reshape2)
 Facts2 <- melt(Facts, id="vars", 
                measure=c("F1","F2","F3","F4","F5","F6"), 
                variable.name="Factor", value.name="Loading")
+
 view(Facts2)
 
 ggplot(Facts2, aes(vars, abs(Loading), fill=Loading)) + 
