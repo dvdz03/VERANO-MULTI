@@ -55,6 +55,58 @@ data("dune")
 view(dune)
 
 
+#
+library(vegan)
+library(factoextra)
+library(car)
+
+#Matriz de distancias con vegan
+#Funcion h-cloust para comparar y luego qu emetodo 
+#Objeto en un arbol y tu decides como agrupar
+
+#Cargar base de datos 
+base <- read.table("C:/Users/tmock/Downloads/VERANO MULTIVARIADA/VERANO MULTI/datos2.txt", header = T)
+View(base)
+#Son variables numéricas
+#Función "dist" es de base y se puede calcular la matriz de distancia 
+
+#Como se ven los datos
+boxplot(base$x)
+hist(base$x)
+#Se pueden ver diferentes distribuciones
+plot(density(base$x))
+boxplot(base$x ~ base$group) #Para ver por grupo 
+
+
+#Son normales?
+#NO SON NOMALES PORQUE SON MENORES A 0.05 
+#Por eso en los garficos se ven dos grupos (en hist)
+shapiro.test(base$x)
+shapiro.test(base$y)
+
+#Para calcular diferentes funciones 
+tapply(base$x, base$group, shapiro.test)
+#Los valores son no significativos por lo tanto cada grupoes normal 
+
+shapiro.test(base$y)
+tapply(base$y, base$group, shapiro.test)
+
+
+#Prueba de correlacion
+cor.test(base$x, base$y)
+#vARIBALES ALTAMENTE CORRELACIONADAS 
+numericas <- cbind(base$x, base$y)
+
+distas <- dist(numericas)
+distas
+
+grupos <- hclust(distas)
+plot(grupos)
+
+
+
+
+#ESTO NO
 # k medias 2
 
 setwd("C:/Users/Monica Figueroa/Desktop/CONGLOMERADOS")

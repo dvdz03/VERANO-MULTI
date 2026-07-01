@@ -108,6 +108,7 @@ summary(m2)
 
 # Ejercicio data(twins)
 ?twins
+data("twins")
 # https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/j.2044-8295.1966.tb01014.x
 
 #paquete para hacer gráficos y así bontio lindo yasí
