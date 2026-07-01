@@ -23,7 +23,7 @@ plot(R7$Foster,R7$Biological,
      ylab="Biological")
 
 #Supuestos anova 
-shapiro.test(m01$residuals)#si hay distribución normal
+shapiro.test(d0$residuals)#si hay distribución normal
 bartlett.test(R7$Foster~R7$Social)#si hay homogeneidad de varianzas
 shapiro.test(d1$residuals)
 bartlett.test(R7$Biological~R7$Social)
@@ -65,6 +65,13 @@ boxCox(m02,lambda=seq(-2,3,1/10))
 
 # ANCOVA
 #faraway usa la lm para el ancova. ancho como variable respuesta y altura como explicativa y su covariable es el estilo
+an1<-lm(Foster~Biological*Social, data=R7)
+shapiro.test(an1$residuals)#si es normal
+ncvTest(an1)#no hay heterocisticidad
+durbinWatsonTest(an1)#independientes
+boxCox(an1)
+summary(an1)#la ordenada al origen, la beta 0 si pasa por el origen, b1 no pasa, las interacciones no son significativas.
+#se ajusta un 75% 
 m1 <- lm(y ~ x * style, data=cathedral)#ya con esto mejoró el problema de las varianzas
 shapiro.test(m1$residuals)#no es normal
 ncvTest(m1)#no hay heterocisticidad 
@@ -84,7 +91,11 @@ m2<- lm(y ~ x + style, data=cathedral)#aquí se quita la interacción, solo se s
 shapiro.test(m2$residuals)#no son normales, la desviación es muy pequeña
 ncvTest(m2)
 durbinWatsonTest(m2)
-
+an2<-lm(Foster~Biological+Social,data=R7)
+shapiro.test(an2$residuals)
+ncvTest(an2)
+durbinWatsonTest(an2)
+summary(an2)#ordenada al origen 0, pendiente es diferente a 0,social igual a 0, ajuste del 77%
 summary(m2)
 #la ordenada al origen sigue siendo igual a 0, la pendiente de la altura es diferente de 0, el estilo es diferente de 0
 #mejoró la explicación, el ajuste del modelo ahora es de 49%
