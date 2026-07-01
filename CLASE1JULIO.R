@@ -143,7 +143,7 @@ destfile<-"C:/Users/100032608/Downloads/wine+quality.zip"
 download.file(url, destfile)
 unzip("C:/Users/100032608/Downloads/wine+quality.zip")
 
-vinos<-read.csv("winequality-white.csv", header = TRUE, sep = ";")
+vinos<-read.csv(file.choose(), header = TRUE, sep = ";")
 head(vinos)
 vinos$quality<-factor(vinos$quality)
 view(vinos)
@@ -163,9 +163,8 @@ colnames(df)<-noms
 
 ggplot(df, aes(x=D1, y=D2, color= Calidad)) +
   geom_point()
-view(vinos)
-head(vinos)
 
+#ESTO NO SE SI SI SE TENÍA QUE HACER O QUE, LLEGUÉ TARDE DEL DESCANSO Y YA NO SUPE
 #Resumen numérico
 #ACIDEZ
 tapply(vinos$fixed.acidity,vinos$quality,summary)
@@ -193,8 +192,32 @@ boxplot(vinos$chlorides~vinos$quality)
 tapply(vinos$chlorides,vinos$quality,shapiro.test)
 bartlett.test(vinos$chlorides~vinos$quality)
 #dioxido de azufre libre
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
 #dioxido de azufre total
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
 #densidad
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
 #ph
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
 #sulfatos
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
 #alcohol
+tapply(vinos$chlorides,vinos$quality,summary)
+boxplot(vinos$chlorides~vinos$quality)
+tapply(vinos$chlorides,vinos$quality,shapiro.test)
+bartlett.test(vinos$chlorides~vinos$quality)
