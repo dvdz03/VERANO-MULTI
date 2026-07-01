@@ -221,3 +221,116 @@ tapply(vinos$chlorides,vinos$quality,summary)
 boxplot(vinos$chlorides~vinos$quality)
 tapply(vinos$chlorides,vinos$quality,shapiro.test)
 bartlett.test(vinos$chlorides~vinos$quality)
+
+
+###########################################
+# Análisis de correspondencias ############
+###########################################
+library(tidyverse)
+library(gplots)
+library(FactoMineR)
+library(factoextra)
+install.packages("corrplot")
+library(corrplot)
+
+data(housetasks)
+view(housetasks)
+
+# Convertir eldataframe a tabla
+dt <- as.table(as.matrix(housetasks))#necesitamos una tabla de contingencias, una tabla de conteos o algo así
+dt
+# Gráfica de globo para las frecuencias absolutas
+balloonplot(t(dt), main ="housetasks", xlab ="", ylab="",
+            label = FALSE, show.margins = FALSE)
+
+# ¿Existe alguna relación entre columnas y filas?
+# Prueba de independencia, prueba de chi cuadrada
+chisq <- chisq.test(housetasks)
+chisq#rechazamos la hipótesis de que las variables sean independientes. 
+
+# Análisis de correspondencias
+?CA#este necesita de la tabla que hicimos, le pones cuantas dimensiones, por defecto son 5, 
+res.ca <- CA(housetasks, graph = FALSE)
+print(res.ca)
+
+
+# Eigenvalores
+
+eig.val <- get_eigenvalue(res.ca)
+eig.val
+fviz_screeplot(res.ca, addlabels = TRUE, ylim = c(0, 50))#te sirve para determinar cuantas dimensiones capturan la mayor parte de la información
+
+
+# Visualización de los resultados de AC
+
+fviz_ca_biplot(res.ca, repel = TRUE)
+
+######################
+# ANÁLISIS POR FILAS #
+######################
+
+# Resultados por filas
+row <- get_ca_row(res.ca)
+row
+
+# Visualización de filas
+
+fviz_ca_row(res.ca, repel = TRUE)
+fviz_ca_row(res.ca, col.row="steelblue", shape.row = 15)
+#xomo se ubican en el plano cada una de las tareas
+
+
+# Calidad de la representación de cada fila en dos dimensiones
+fviz_ca_row(res.ca, col.row = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+            repel = TRUE)
+#que tan bien está explicado, mientras más naranja mejor
+
+# Contribución de las filas a cada dimensión
+row$contrib
+corrplot(row$contrib, is.corr=FALSE)  
+#representación de las correlaciones
+# Primera dimensión
+fviz_contrib(res.ca, choice = "row", axes = 1, top = 10)
+# Segunda dimensión
+fviz_contrib(res.ca, choice = "row", axes = 2, top = 10)
+
+# Ambas dimensiones
+fviz_contrib(res.ca, choice = "row", axes = 1:2, top = 10)
+## La línea discontinua roja en el gráfico anterior indica el valor promedio esperado, 
+## si las contribuciones fueran uniformes (1/12=0.08). 
+## El cálculo del valor de contribución esperado, bajo hipótesis nula.
+
+# Color por importancia
+fviz_ca_row(res.ca, col.row = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+            repel = TRUE)
+
+
+#########################
+# ANÁLISIS POR COLUMNAS #
+#########################
+col <- get_ca_col(res.ca)
+col
+
+
+fviz_ca_col(res.ca)
+# Calidad
+fviz_ca_col(res.ca, col.col = "cos2", 
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+
+# Biplot
+fviz_ca_biplot(res.ca, repel = TRUE)
+
+
+# Otro gráfico que da importancia ya se a a las columnas o a las filas
+# Columnas
+fviz_ca_biplot(res.ca, map ="colgreen", arrow = c(TRUE, FALSE),
+               repel = TRUE)
+
+# En el gráfico anterior, la posición de los puntos del perfil de la columna 
+# no cambia con respecto a la del biplot convencional. 
+# Sin embargo, las distancias de los puntos de las filas desde el origen de 
+# la gráfica están relacionadas con sus contribuciones al mapa de factores bidimensional.
+#Cuanto más cerca esté una flecha (en términos de distancia angular) de un eje, mayor será la contribución de la categoría de fila en ese eje en relación con el otro eje. Si la flecha está a medio camino entre los dos, su categoría de fila contribuye a los dos ejes en la misma medida. 
