@@ -304,6 +304,7 @@ feinmorph.dist
 grupos<-hclust(feinmorph.dist)
 plot(grupos)
 feinmorph2<-feinmorph[,-1]
+feinmorph2
 rownames(feinmorph2)<-feinmorph[,1]#hay nombres triplicados y duplicados. 
 #tendríamos que hacer no se que para quitar eso de los duplicados y así 
 table(feinmorph$spp)
@@ -314,4 +315,13 @@ length(unu)
 especieses<-paste(feinmorph[,1], unu, sep = "")
 head(especieses)
 rownames(feinmorph2)<-especieses
+feinmorph.dist<-dist(feinmorph2)
+grupos<-hclust(feinmorph.dist)
+
+plot(grupos,cex=2)
 view(feinmorph2)
+
+install.packages("ggdendro")
+library(ggdendro)
+library(plotly)
+plot_dendro(grupos)
