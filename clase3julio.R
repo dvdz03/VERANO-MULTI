@@ -298,4 +298,20 @@ p3
 p3a #gráficos de los determinantes. 
 
 #análisis de conglomerados jerarquico.
-
+#ya está la matriz de distancias 
+feinmorph.dist
+#etiquetar los renglones 
+grupos<-hclust(feinmorph.dist)
+plot(grupos)
+feinmorph2<-feinmorph[,-1]
+rownames(feinmorph2)<-feinmorph[,1]#hay nombres triplicados y duplicados. 
+#tendríamos que hacer no se que para quitar eso de los duplicados y así 
+table(feinmorph$spp)
+#vector con los números tal vez
+unu<-c(seq(from=1,to=157,by=1),c(seq(from=1,to=30,by=1)),c(seq(from=1,to=31,by=1)),c(seq(from=1,to=46,by=1)))
+unu
+length(unu)
+especieses<-paste(feinmorph[,1], unu, sep = "")
+head(especieses)
+rownames(feinmorph2)<-especieses
+view(feinmorph2)
