@@ -325,3 +325,90 @@ install.packages("ggdendro")
 library(ggdendro)
 library(plotly)
 plot_dendro(grupos)
+
+
+#########################################################################
+#########################################################################
+#########################################################################
+#########################################################################
+#########################################################################
+#########################################################################
+####### ECUACIONES ESTRUCTURALES TEMA 3 JULIO ###########################
+#########################################################################
+#########################################################################
+
+# https://rpubs.com/Agrele/SEM
+
+library(lavaan)
+library(lavaanPlot)
+library(piecewiseSEM)
+library(tidyverse)
+
+
+set.seed(2002)
+# datos simulados
+# riqueza de orugas dependiente de temperatura y tiempo en años
+# la precipitación no afecta a la riqueza
+
+semdata <- data.frame('years' = 1:60) |> 
+  within({
+    precip <- rnorm(60, 100, 10) 
+    temperature <- 0.05 + 0.05*years + rnorm(60, 1, 0.5) 
+    catrich <- 350 - 2*years -50*temperature + rnorm(60, 50, 50)
+  })
+
+view(semdata)
+
+# Gráficos
+ggplot(semdata, aes(years, temperature))+
+  geom_point()+
+  geom_smooth(method = lm)
+
+
+ggplot(semdata, aes(years, catrich))+
+  geom_point()+
+  geom_smooth(method = lm)
+
+# Matriz de varianzas-covarianzas
+cov(semdata)
+
+
+##MODELO
+# En el siguiente modelo las variables exógenas son años y temperatura.
+# Las variables endógenas son la riqueza de orugas y la precipitación.
+# Las precipitaciones se predicen por años, la riqueza de orugas se predice por años y la temperatura, la temperatura se predice por años
+
+model1 <- '
+  precip + temperature ~ years
+  catrich ~ years + temperature'
+
+# Ajuste del modelo
+model1.fit <- sem(model1, data = semdata) 
+
+
+# Resumen
+summary(model1.fit, rsq = TRUE, fit.measures = TRUE, standardized = TRUE) 
+
+
+#Gráfica del modelo
+lavaanPlot(name = "model1", model1.fit, coefs = TRUE) # prints path diagram that specifies relationships specified in `model1` along with the estimated path coefficients from the fitted model (here, the unstandardized coefficient estimates in the summary output.)
+
+# Mismo modelo datos escalados
+semdata_scaled <- apply(semdata, MARGIN = 2, scale)
+
+model1.scaled <- sem(model1, data = semdata_scaled)
+summary(model1.scaled, rsq = TRUE, fit.measures = TRUE, standardized = TRUE)
+
+lavaanPlot(name = "scaled", model1.scaled, coefs = TRUE)
+
+# Otro modelo mas simple
+model2 <- 'precip +temperature ~ years
+    catrich ~ temperature'
+
+model2.fit <- sem(model2, data = semdata_scaled) #still using scaled data
+summary(model2.fit, fit.measures = TRUE, standardized = TRUE, rsquare=TRUE)
+
+lavaanPlot(name = "model2", model2.fit, labels = names(semdata_scaled), coefs = TRUE)
+
+# Evaluación de modelos
+AIC(model1.fit, model1.scaled, model2.fit)
