@@ -1,0 +1,32 @@
+---
+title: "Ejercicio base de datos vinos"
+author: "David Flores"
+date: "2026-07-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(MASS)
+library(tidyverse)
+library(magrittr)
+library(ggpubr)
+url<-"https://archive.ics.uci.edu/static/public/186/wine+quality.zip"
+destfile<-"C:/Users/100032608/Downloads/wine+quality.zip"
+download.file(url, destfile)
+unzip("C:/Users/100032608/Downloads/wine+quality.zip")
+
+vinos<-read.csv(file.choose(), header = TRUE, sep = ";")
+```
+Lo primero que se hace es cargar la base de datos y asignarla a un objeto.
+
+Se obtiene una muestra de 100 valores aleatorios y se asigna la cualidad de calidad del vino como un factor
+
+```{r}
+vinos$quality<-factor(vinos$quality)
+view(vinos)
+ene<-1:4898
+muestra<-sample(ene,100)
+vinos2<-vinos[muestra,]
+str(vinos2)
+```
+
