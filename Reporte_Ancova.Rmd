@@ -18,4 +18,76 @@ head(R7)
 str(R7)
 ```
 
-Primero cargamos las librerías necesarias así como la base de datos y se asigna a un objeto 
+Primero cargamos las librerías necesarias así como la base de datos y se asigna a un objeto.\
+Antes de llevar a cabo el análisis de covarianzas, primero se realizará un resúmen numérico y gráfico de la base de datos para verificar que sus datos sean independientes, que tengan homogeneidad de varianzas y que los residuales tengan una distribución normal
+
+## Resumen numérico
+```{r}
+lapply(split(R7,R7$Social),summary)
+summarySE(R7,measurevar="Foster",groupvars="Social")
+summarySE(R7,measurevar="Biological",groupvars="Social")
+```
+Con la función *lapply* nos facilita la observación de las medidas centrales y de posición como la media, la mediana así como los cuartiles, además nos permite observar los resultados agrupados en base al factor social de la base de datos, nos da las medidas centrales de acuerdo al nivel social presente en la bse de datos.\
+En estos resultados podemos observar que la media y la mediana de los tres niveles sociales son cercanas entre sí, además de contar con un rango similar con excepción del nivel social alto que cuenta con un rango más amplio que los demás niveles.\
+Con las medidas de dispersión nos arroja datos similares, la desviación estándar es más cercana entre los grupos bajos y medios de la categoría social mientras que el grupo alto presenta diferencias con los demás.
+
+## Resumen gráfico
+
+Para observar estos resultados primero se harán boxplots para observar los resultados de las medidas centrales y posteriormente una gráfica de puntos para observar la distribución de estos datos. 
+```{r}
+boxplot(R7$Foster~R7$Social)
+boxplot(R7$Biological~R7$Social)
+plot(R7$Biological,R7$Foster)
+plot(R7$Foster,R7$Biological,
+     type="n",
+     xlab="Altura",
+     ylab="Largo")
+text(R7$Foster,R7$Biological,as.character(R7$Social))
+plot(R7$Foster,R7$Biological,
+     pch=16,
+     col=(rainbow(3))[R7$Social],
+     xlab="Foster",
+     ylab="Biological")
+```
+Estos gráficos nos ilustran lo que ya determinamos en los análisis numéricos, que el grupo social medio y bajo son más parecidos entre si que el grupo social alto, en el gráfico de puntos se aprecia una separación leve en estos grupos siendo los puntos de color rojo, que están más arriba y hay 1 o 2 que se mezclan con los demás grupos mientras que el grupo bajo y medio prácticamente no hay diferencia, todos están mezclados entre si. 
+
+## Relaciones
+
+Ahora se harán anovas para determinar si hay alguna relación entre las variables *Foster*, *Biological* y *Social* 
+```{r}
+d0<-aov(Foster~Social, data=R7)
+summary(d0)
+d1<-aov(Biological~Social,data=R7)
+summary(d1)
+```
+Como se observa en los resumenes de los anovas, estos cuentan con un valor menor a 0.05 en ambas ocasiones lo que resulta en no rechazar la hipótesis nula, es decir que no hay diferencia entre las variables.\
+Posteriormente se realizarán los supuestos del anova para verificar los resultados del mismo. 
+```{r}
+shapiro.test(d0$residuals)
+bartlett.test(R7$Foster~R7$Social)
+shapiro.test(d1$residuals)
+bartlett.test(R7$Biological~R7$Social)
+```
+Donde se observa que para ambos casos si hay una distribución normal de los residuales así como homogeneidad de varianzas enl a base de datos 
+
+## ANCOVA 
+
+Finalmente realizaremos el ancova para estos datos. 
+```{r}
+an1<-lm(Foster~Biological*Social, data=R7)
+shapiro.test(an1$residuals)#si es normal
+ncvTest(an1)#no hay heterocisticidad
+durbinWatsonTest(an1)#independientes
+summary(an1)
+```
+
+Como se cumplen todos los supuestos no hay necesidad de transformar los datos, y el modelo se ajusta un 75% dado el resultado de la R cuadrada, no hay heterocedasticidad y los datos son independientes, esto contemplando la interacción entre la variable *biological* y *social*, sin embargo en el resumen del análisis, muestra que las interacciones no son significativas por lo que se repetirá el análisis omitiendo esta interacción entre variables. 
+
+```{r}
+an2<-lm(Foster~Biological+Social,data=R7)
+shapiro.test(an2$residuals)
+ncvTest(an2)
+durbinWatsonTest(an2)
+summary(an2)
+```
+En este caso se observa lo mismo que el análisis anterior, es decir, todos los supuestos se cumplen, pero en este caso el ajuste del modelo pasó de 75% al 79% por lo que incluir el término de interacción no es significativo y no resulta útil para el modelo. 
