@@ -1,0 +1,21 @@
+---
+title: "Reporte ANCOVA"
+author: "David Flores"
+date: "2026-07-02"
+output: html_document
+---
+# Reporte ANCOVA base de datos *twins*
+
+```{r setup, include=FALSE}
+library(Rmisc)
+library(tidyverse)
+library(car)
+library(faraway)
+library(Hmisc)
+data("twins")
+R7<-twins
+head(R7)
+str(R7)
+```
+
+Primero cargamos las librerías necesarias así como la base de datos y se asigna a un objeto 
