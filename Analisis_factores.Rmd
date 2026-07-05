@@ -4,7 +4,7 @@ author: "David Flores"
 date: "2026-07-02"
 output: html_document
 ---
-
+# Análisis de factores
 ```{r setup, include=FALSE}
 library(EFAtools)
 library(tidyverse)
@@ -17,9 +17,13 @@ pgfull<-read.table("C:/Users/100032608/Downloads/pgfull.txt", header=TRUE)
 pgfull
 ```
 
+Lo primero que se hace es cargar todas las librerías y asignar la base de datos a un objeto 
+
 ```{r}
 pg_especies<-pgfull[,1:54]
 ```
+
+Posteriormente a la base datos se omiten las últimas columnas dado que para esto necesitamos variables numéricas, la base de datos consiste en observaciones de especies en parcelas, las últimas columnas corresponden a variables ambientales por lo que no serán útiles hasta el final del análisis.
 
 ```{r}
 BARTLETT(pg_especies)
@@ -28,11 +32,17 @@ ani<-antiImage(pg_especies)
 print(ani,digits=3)
 ```
 
+Una vez hecho esto empezaremos con las pruebas, para empezar la prueba de *BARTLETT* que es una prueba de esfericidad, lo que nos dice es si las correlaciones sin significativas, su resultado es significativo lo que demuestra que la base de datos se le puede aplicar un análisis de factores.\
+La prueba de KMO nos da un valor en el cual se puede determinar si la base de datos se le puede aplicar un análisis de factores, mientras más cercano a 1 sea el KMO es mejor, sin embargo en el resultado de nuestra prueba el KMO es de 0.5 aproximadamente lo que nos indica que los datos no son óptimos para este tipo de análisis.
+
 ```{r}
 PARALLEL(pg_especies,eigen_type="SMC")
 N_FACTORS(pg_especies,criteria=c("PARALLEL","EKC","SMT"),
                        eigen_type_other = c("SMC","PCA"))
 ```
+
+A pesar de que los datos no son óptimos para este tipo de análisis, se hacen las pruebas de *PARALLEL* que compara los eigenvalores obtenidos de la mariz de correlaciones y las compara con un amtriz nula, se le aplica el método SMC el cual usa correlaciones cudradas mínimas como estimadores y esta prueba se usa para retener factores, pero no funciona muy bien para factores altamente correlacionados. *N_FACTORS* es una función con la que puedes ejecutar múltiples criterios para evaluar la retención de factores, además de que revisa los datos para saber si se le puede aplicar un análisis de factores.\
+El resultado de estas pruebas nos arrojan que la cantidad de factores necesarios para estos datos son 7 o 10, para esto haremos con 7 factores.
 
 ```{r}
 EFA(pg_especies,n_factors= 7)
@@ -54,6 +64,8 @@ Facts<-mutate(Facts,vars=vars)
 
 ```
 
+Asignamos cada factor a un objeto y lo unimos en un data frame que al final obtenemos una columna más con los nombres de las especies 
+
 ```{r}
 Facts2 <- melt(Facts, id="vars", 
                measure=c("F1","F2","F3","F4","F5","F6","F7"), 
@@ -72,6 +84,8 @@ ggplot(Facts2, aes(x= vars, y = abs(Loading), fill=Loading)) +
   theme_bw(base_size=10)+
   theme(axis.text.y=element_text(size=5))
 ```
+
+Con este gráfico podemos observar la relación entre factores y abundancia de cada una de las especies, mientras más fuerte sea el color ya sea rojo o azul tendrá una ausencia o presencia marcada respectivamente. En el gráfico se observa que para el factor 1 hay varias especies que están presentes cuando el factor 1 está ahí por ejemplo *LO, LH, LC y PS*, pero al contrario hay otras especies que no están presentes con el factor 1 como *PT, PP, DG, AS, AP, y AE* dado que estás tienen una relación inversa, aquellas que presentan un color más tenue la relación es más cercana a 0 lo que puede indicar que no dependen que el factor este presente para determinar su presencia o ausencia. 
 
 ```{r}
 vmx1<-EFA(pg_especies, n_factors = 7, rotation = "varimax")
