@@ -10,6 +10,8 @@ library(Rmisc)
 summarySE(R7,measurevar="Foster",groupvars="Social")
 summarySE(R7,measurevar="Biological",groupvars="Social")
 #Resumen gráfico
+boxplot(R7$Foster~R7$Social)
+boxplot(R7$Biological~R7$Social)
 plot(R7$Biological,R7$Foster)
 plot(R7$Foster,R7$Biological,
      type="n",
