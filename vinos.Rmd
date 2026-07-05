@@ -10,12 +10,8 @@ library(MASS)
 library(tidyverse)
 library(magrittr)
 library(ggpubr)
-url<-"https://archive.ics.uci.edu/static/public/186/wine+quality.zip"
-destfile<-"C:/Users/100032608/Downloads/wine+quality.zip"
-download.file(url, destfile)
-unzip("C:/Users/100032608/Downloads/wine+quality.zip")
 
-vinos<-read.csv(file.choose(), header = TRUE, sep = ";")
+vinos<-read.csv("C:/Users/100032608/Downloads/winequality-white.csv", header = TRUE, sep = ";")
 ```
 Lo primero que se hace es cargar la base de datos y asignarla a un objeto.
 
@@ -28,5 +24,23 @@ ene<-1:4898
 muestra<-sample(ene,100)
 vinos2<-vinos[muestra,]
 str(vinos2)
+```
+
+Posteriormente se hace un escalamiento multidimensional, el k=3 indica que son 3 dimensiones 
+```{r}
+# MDS 
+mds_vinos <- cmdscale(dist(vinos2[, 1:11]),k=3)
+
+```
+
+Finalmente visualizamos los resultados del escalamiento multidimensional asignando todo a un data frame y con un gráfico de puntos 
+```{r}
+df<-data.frame(mds_vinos[,1],mds_vinos[,2],vinos2$quality)
+df
+noms<-c("D1", "D2", "Calidad")
+colnames(df)<-noms
+
+ggplot(df, aes(x=D1, y=D2, color= Calidad)) +
+  geom_point()
 ```
 
