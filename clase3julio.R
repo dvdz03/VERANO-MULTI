@@ -88,7 +88,7 @@ view(feinacoust)
 # Análisis exploratorios
 scatterplotMatrix(~hw+hl+td+ew+tl+sl+fl+end+nsd+iod+ind+dsa,data=feinmorph,diagonal=list(method='boxplot'))
 ggpairs(feinmorph, columns = 2:13)
-
+feinmorph
 par(mfrow=c(2,3))
 attach(feinmorph)
 boxplot(hw~spp)

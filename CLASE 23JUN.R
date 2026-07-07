@@ -4,6 +4,7 @@ install.packages("MPV")
 library(MPV)
 data()
 data("faithful")
+faithful
 mod1<-lm(waiting~eruptions,data=faithful)
 mod1
 lm(formula=waiting~eruptions,data=faithful)
