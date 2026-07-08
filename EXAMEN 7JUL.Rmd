@@ -140,7 +140,7 @@ ej4final<- cbind(df_limpio, Cluster=as.factor(grupitos))
 
 Esto se realiza con el fin de etiquetar cada mujer dentro de 1 de los 5 grupos.
 ```{r}
-perfil_prom<-aggregate(cbind(R_age, R_income,R_height as.numeric(R_health)) ~ Cluster, 
+perfil_prom<-aggregate(cbind(R_age, R_income,R_height, as.numeric(R_health)) ~ Cluster, 
                        data = ej4final, 
                        FUN = mean, na.rm = TRUE)
 conteos<-table(ej4final$Cluster)
@@ -188,8 +188,50 @@ boxplot(calaveras$bl~calaveras$epoch)
 boxplot(calaveras$nh~calaveras$epoch)
 ```
 
+Primero se hace un ANOVA para verificar los supuestos
+```{r}
+mode1<-aov(calaveras$mb~calaveras$epoch)
+summary(mode1)
+shapiro.test(mode1$residuals)
+bartlett.test(calaveras$mb~calaveras$epoch)#si todo bien
+TukeyHSD(mode1)
+```
+De acuerdo a los resultados estos dos grupos si tienen diferencias entre sí dado el valor de p, los residuales se distribuyen de manera normal, hay homogeneidad de varianza y se realizó la prueba de Tukey la cual muestra que la primera época es diferentea la cuarta al igual que la última época, y la última época es diferente a la segunda.
+
+Para hacer el MANOVA primero se asignan todas las variables de respueseta a un vector y se empieza a hacer el modelo con la única variable explicativa que en este caso son las épocas.
+
+```{r}
+respuestas<-cbind(calaveras$mb,calaveras$bh,calaveras$bl,calaveras$nh)
+mano_va<-manova(respuestas~epoch,data=calaveras)
+summary(mano_va)
+```
+Posteriormente se realiza un resumen de anova para observar cada uno de los anovas y se comprueba el supuesto de normalidad. 
+
+```{r}
+shapiro.test(mano_va$residuals)
+summary.aov(mano_va)
+```
+
+Finalmente se hace un análisis de discriminantes.
+```{r}
+
+mod_lda<-lda(epoch~mb+bh+bl+nh,data=calaveras)
+mod_lda
+#plot(mod_lda,dimen=1)
+
+```
+
+Se hace con todas las variables de respuesta y se asigna a un objeto llamado *mod_lda*, este nos da como resultado la proporción de cada discriminante, el cual podemos ver que el primero tiene un 88% de variación por lo que solo ese podría ser necesario para graficar.\
+
+En la gráfica se puede observar que efectivamente existen cambios en las medidas craneales en las épocas teniendo evidencia de que el mestizaje tuvo lugar en esa población.
+La gráfica no pudo cargar pero se adjunta una imagen del visualizador para ejemplificar el resultado. 
+```{r}
+knitr::include_graphics("C:/Users/100032608/Documents/VERANO-MULTI/plot_mod_lda.pdf")
+```
 
 
+
+## **Ejercicio 4**
 
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
