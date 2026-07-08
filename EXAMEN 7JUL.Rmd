@@ -78,9 +78,7 @@ summary(ejercicio1.2)
 vif(ejercicio1.2)
 shapiro.test(ejercicio1.2$residuals)
 ncvTest(ejercicio1.2) 
-plot(ejercicio1.2)
 durbinWatsonTest(ejercicio1.2)
-barplot(aire$SO2)
 
 ejercicio1.3<-lm(SO2^-0.3~temp+manu+wind+precip,data=aire)
 summary(ejercicio1.3)
@@ -233,21 +231,31 @@ knitr::include_graphics("C:/Users/100032608/Documents/VERANO-MULTI/plot_mod_lda.
 
 ## **Ejercicio 4**
 
+```{r,echo=FALSE}
+data("watervoles")
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Para este ejercicio se hará un escalamiento multidimensional no paramétrico, porqueal tener como entrada una matri de disimilitud, con este método se podrán representar de mejor manera las relaciones descritas ahí.
+Para empezar se transforman los datos porque el problema nos indica que tenemos porcentajes, se usará la transformación de Hellinger. Después se hará una matriz de disimilitud con el método euclidiano.\
+En los argumentos se usa *k=2* para reducir las dimensiones del modelo evitando su complejidad, *trymax=100* se refiere al número de veces con que va a mapear los puntos para que al final se quede con aquel modelo que tenga el *stress* más bajo.
+```{r}
+watervoles1<-decostand(watervoles,method="hellinger")
+matridist<-vegdist(watervoles1,method="euclidean")
+ahorasi<-metaMDS(matridist,k=2,trymax=100)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Para el objeto ***grups*** se crean etiquetas para que los primeros 6 datos estén en la categoría de Reino Unido y los siguientes 8 a Europa correspondiendo a la descripción de los datos.\
+Las siguientes líneas son para poner los puntos y texto en la gráfica para poder determinar si hay una separación en los datos.
+
+```{r}
+grups<-c(rep("Reino Unido",6),rep("Europa",8))
+plot(ahorasi,type="n",main="NMDS")
+points(ahorasi,display="sites",col=ifelse(grups=="Reino Unido","red","blue"),pch=19)
+text(ahorasi,labels=rownames(watervoles))
+legend("topright",legend=c("Reino Unido","Europa"),col=c("red","blue"),pch=19)
+```
+
+En el gráfico se puede observar que los datos si están separados en su mayoría, hay valores azules que corresponden a Europa que están situados muy a la derecha mientras que los de Reino Unido (rojos) están a la izquierda, sin embargo, hay un punto donde el punto correspondiente a Alemania se mezcla con los demás de Reino Unido.\
+Los puntos de Europa están distribuidos ampliamente lo que permite que se lleguen a mezclar. 
+
