@@ -1,4 +1,5 @@
 # TRABAJO FINAL
+library(xlsx)
 garbanzo<-read.xlsx("C:/Users/100032608/Documents/veranomulti_exp.1.xlsx", sheetIndex = 1)
 garbanzo
 view(garbanzo)
@@ -59,7 +60,14 @@ barplot(tasa_agua[,2], names.arg=tasa_agua[,1], main="Mortalidad por Agua", col=
 barplot(tasa_luz[,2], names.arg=tasa_luz[,1], main="Mortalidad por Luz", col="red")
 barplot(tasa_fert[,2], names.arg=tasa_fert[,1], main="Mortalidad por Fertilizante", col="red")
 
+head(garbanzo)
+cor(garbanzo[,c(4,5,6)])#hay multicolinearidad 
+
 #MANOVA
+mod_man0<-manova(cbind(tallo,hojas,raiz)~agua*luz*fertilizante,data=garbanzo)
+summary(mod_man0)
+summary.aov(mod_man0)
+shapiro.test(mod_man0$residuals)
 mod_man<-manova(cbind(tallo,hojas,raiz)~agua*luz*fertilizante,data=garbanzosvivos)
 mod_man1<-manova(cbind(tallo,hojas,raiz)~agua+luz+fertilizante+agua*luz*fertilizante,data=garbanzosvivos)
 summary(mod_man)
@@ -75,27 +83,16 @@ cosa<-summary.aov(mod_norm)
 cosa1<-summary.aov(mod_man)
 summary.aov(mod_man1)
 summary.aov(mod_man)
-  
-#PERMANOVA
-var_res<-cbind(garbanzosvivos$tallo,garbanzosvivos$hojas,garbanzosvivos$raiz)
-per_mano<-adonis2(cbind(garbanzosvivos$tallo, garbanzosvivos$hojas, garbanzosvivos$raiz)~agua*luz*fertilizante,
-                  data=garbanzosvivos,
-                  method="euclidean")
-per_mano
+cosa  
 
-par(mfrow=c(1,1))
-interaction.plot(garbanzosvivos$luz, garbanzosvivos$fertilizante, garbanzosvivos$tallo,
-                 type="b", col=c("red","blue"), pch=c(19,17),
-                 xlab="Luz", ylab="Altura de Tallo",
-                 main="Interacción: Luz x Fertilizante")
 
 
 #anovas
-tallos<-aov(tallo~agua*luz*fertilizante,data=garbanzosvivos)
+tallos<-aov(tallo~agua*luz*fertilizante,data=garbanzo)
 summary(tallos)
-hojasz<-aov(hojas~agua*luz*fertilizante,data=garbanzosvivos)
+hojasz<-aov(hojas~agua*luz*fertilizante,data=garbanzo)
 summary(hojasz)
-raices<-aov(raiz~agua*luz*fertilizante,data=garbanzosvivos)
+raices<-aov(raiz~agua*luz*fertilizante,data=garbanzo)
 summary(raices)
 
 durbinWatsonTest(tallos)
@@ -109,3 +106,20 @@ garbanzosvivos$luz <- as.factor(garbanzosvivos$luz)
 leveneTest(tallo ~ agua * luz * fertilizante, data = garbanzosvivos)
 leveneTest(hojas ~ agua * luz * fertilizante, data = garbanzosvivos)
 leveneTest(raiz ~ agua * luz * fertilizante, data = garbanzosvivos)
+
+#LDA
+mod_lda1<-lda(agua~tallo+raiz+fertilizante,data=garbanzosvivos)
+mod_lda1
+plot(mod_lda1,dimen=1)
+library(MASS)
+mod_lda2<-lda(agua~tallo+raiz+fertilizante,data=garbanzo)
+mod_lda2
+plot(mod_lda2,dimen=1)
+
+
+#PERMANOVA
+var_res<-cbind(garbanzosvivos$tallo,garbanzosvivos$hojas,garbanzosvivos$raiz)
+per_mano<-adonis2(cbind(garbanzosvivos$tallo, garbanzosvivos$hojas, garbanzosvivos$raiz)~agua*luz*fertilizante,
+                  data=garbanzosvivos,
+                  method="euclidean")
+per_mano
