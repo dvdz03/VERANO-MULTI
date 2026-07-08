@@ -77,11 +77,40 @@ ejercicio2<-CHFLS
 head(ejercicio2)
 str(ejercicio2)
 summary(ejercicio2)
-tapply(ejercicio2,ejercicio2$R_region,summary)
-view(ejercicio2)
-names(CHFLS)
+#distancia de gower porque hay variables de todos los tipos y así 
+library(cluster)
+df_limpio<-ejercicio2 %>%
+  na.omit() %>%
+  mutate(across(c(R_health,R_happy,R_region,R_edu)))
+dis_gow<-daisy(df_limpio,metric="gower")
+hc_arbol<-hclust(dis_gow,method="ward.D2")
+
+plot(hc_arbol,main="tipos de mujeres",labels=F)
+rect.hclust(hc_arbol, k=5, border="red")
+grupitos<-cutree(hc_arbol, k=5)
+ej4final<- cbind(df_limpio, Cluster=as.factor(grupitos))
+
+#perfilitos<-ej4final %>%
+#  group_by(Cluster) %>%
+#  summarise(
+#    años=mean(R_age),
+#    dinero=mean(R_income),
+#    Saludes=mean(as.numeric(R_health)),
+#    .groups="drop"
+#  )
 
 
+perfil_prom<-aggregate(cbind(R_age, R_income, as.numeric(R_health)) ~ Cluster, 
+                       data = ej4final, 
+                       FUN = mean, na.rm = TRUE)
+conteos<-table(ej4final$Cluster)
+perfil_prom
+conteos
+class(ej4final)
+
+library(dplyr)
+perfilitos
+library(Rmisc)
 library(tidyverse)
 library(CCA)
 library(vegan)
