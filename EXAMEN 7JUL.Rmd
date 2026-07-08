@@ -1,0 +1,211 @@
+---
+title: "Ejercicios examen"
+author: "David Flores"
+date: "2026-07-08"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(MVA)
+library(car)
+library(tidyverse)
+library(car)
+library(Rmisc)
+library(cluster)
+library(dplyr)
+library(CCA)
+library(vegan)
+library(GGally)
+library(fields)
+library(MASS)
+```
+
+## Ejercicios tipo examen 
+
+Estos son 4 ejercicios con diferentes bases de datos, lo primero que se hace es cargar todas las librerías necesarias y  posteriormente se empezará con los ejercicios. 
+
+### EJERCICIO 1
+La primera serie de datos que vamos a emplear es USairpollution. Queremos saber cuáles son los mejores indicadores o predictores del grado de contaminación atmosférica en una ciudad, medido según el contenido de dióxido de azufre (SO2) en el aire.
+```{r,echo=FALSE}
+data("USairpollution")
+aire<-USairpollution
+```
+
+Primero cargamos la base de datos y la asignamos a un objeto, en este caso lo que pide el ejercicio es encontrar cuales son los mejores indicadores de dióxido de azufre atmosférico, para esto se realizará un análisis de regresión linear múltiple, esto porque las instrucciones piden evaluar el comportamiento de una variable específica que en este caso es la concentración de *SO2* la cual va a depender de todas las demás variables, además la regresión nos deja evaluar las contribuciones que tienen las demás variables sobre la variable de respuesta y se pueden descartar del modelo aquellas que no sean significativas o generen resultados extraños.\
+Primero se realizará un análisis exploratorio en donde se obtendrán las medidas centrales y de dispersión de la base de datos y después se hará el análisis ya descrito.
+
+### Resumen numérico y gráfico
+
+```{r}
+summary(aire)
+tapply(aire,aire$manu,summary)
+summarySE(aire,measurevar="SO2")
+summarySE(aire,measurevar="temp")
+summarySE(aire,measurevar="manu")
+summarySE(aire,measurevar="popul")
+summarySE(aire,measurevar="wind")
+summarySE(aire,measurevar="precip")
+summarySE(aire,measurevar="predays")
+boxplot(aire$SO2)
+boxplot(scale(aire))
+
+```
+
+Se realizaron estás lineas de código con las funciones *summary* y *summarySE* para obtener las medidas centrales y de dispersión, la primera nos da un resumen de toda la base, pero es demasiado extenso, para eso se corrió la segunda línea de código la cual ejecuta la misma función pero agrupando los resultados bajo la variable de manufactura, es decir, la cantidad de fábricas. Después de esto con la función *summarySE* se llevó a cabo las medidas de dispersión de todas las variables.\
+Finalmente se realizó un boxplot único de la variable SO2 y otro de toda la base de datos escalada porque los datos de población eran demasiado grandes en comparación con las demás variables lo que hacía que las demás cajas se vieran aplastadas. 
+
+### Regresión múltiple 
+```{r}
+ejercicio1<-lm(SO2~temp+manu+popul+wind+precip+predays,data=aire)
+summary(ejercicio1)
+ejercicio1.1<-step(ejercicio1)
+summary(ejercicio1.1)
+shapiro.test(ejercicio1.1$residuals)
+vif(ejercicio1.1)
+boxCox(ejercicio1.1)
+bc<-boxCox(ejercicio1)
+lambda_optimo <- bc$x[which.max(bc$y)]
+print(lambda_optimo)
+```
+
+Se realizó el primer modelo, el cual incluye todas las variables, el resumen de este modelo nos indica que la variable *predays* no es significativa, por lo tanto se optó por usar la función *step* la cual eliminó dicha variable y en el resumen de este nuevo modelo se puede observar que el ajuste de la R cuadrada ajustada mejora por 1% y de igual manera el valor de akaike disminuye por lo tanto se puede concluir que esa variable no es significativa para el modelo.\
+Al revisar los supuestos del modelo se observa que no hay normalidad en los residuales del mismo, después de esto se usó la función vif para verificar la correlación entre variables lo cual permitió observar que las variables de manufactura y población están correlacionadas entre si.\
+Para tratar de corregir estas situaciones en los datos, se realiza la transformación de boxCox para ilustrar que tipo de transformación usar.
+
+```{r}
+ejercicio1.2<-lm(log(SO2)~temp+manu+wind+precip,data=aire)
+summary(ejercicio1.2)
+vif(ejercicio1.2)
+shapiro.test(ejercicio1.2$residuals)
+ncvTest(ejercicio1.2) 
+plot(ejercicio1.2)
+durbinWatsonTest(ejercicio1.2)
+barplot(aire$SO2)
+
+ejercicio1.3<-lm(SO2^-0.3~temp+manu+wind+precip,data=aire)
+summary(ejercicio1.3)
+vif(ejercicio1.3)
+shapiro.test(ejercicio1.3$residuals)
+ncvTest(ejercicio1.3)
+durbinWatsonTest(ejercicio1.3)
+```
+En base a estos resultados se hicieron 2 modelos más, uno logarítmico y otro con el valor que dio la transformación de boxCox del primer modelo, en ambos casos los resultados fueron muy similares y todos los supuestos se cumplieron obteniendo un ajuste del 58% y del 60% respectivamente.
+
+Para este ejercicio, los resultados indican que la temperatura y el viento tienen un efecto de mitigación, por lo que a mayor temperatura o más velocidad del viento la concentración de SO2 disminuye por 6% y 18% respectivamente, por otro lado la cantidad de fábricas y la precipitación parecen ser indicadores positivos, es decir a mayor precipitación y más cantidad de fábricas en la ciudad, la presencia del SO2 en el aire aumenta 2% y 0.05% respectivamente.
+
+## Ejercicio 2
+Primero cargar los datos y asignarlos
+```{r,echo=FALSE}
+data("CHFLS")
+ejercicio2<-CHFLS
+```
+
+Para este ejercicio se hará un análisis de conglomerados, esto principalmente por la indicación que da el ejercicio el cual se basa en agrupar a los individuos de los datos y agruparlos en base al tipo de mujer.\
+Lo primero que se hace es un análisis numérico y gráfico.
+```{r}
+summary(ejercicio2)
+summarySE(ejercicio2,measurevar = "R_age")
+summarySE(ejercicio2,measurevar = "R_income")
+summarySE(ejercicio2,measurevar = "R_height")
+numuj<-ejercicio2[,c(2,4,6)]
+boxplot(scale(numuj))
+```
+
+Lo que nos muestra esto es que las medias y medianas de las variables numéricas continuas son relativamente cercanas entre si en la mayoría de los casos.\
+Para realizar el boxplot lo que se hizo fue separar las columnas numéricas de las categóricas en otro objeto, así mismo se excluyeron aquellas mediciones referentes a las parejas de las mujeres entrevistadas. Lo que nos muestra la gráfica es que los grupos no son tan separados, pero hay muchas observaciones atípicas que exceden el rango de las variables ya sea con valores muy altos o muy bajos.
+
+### Análisis de conglomerados
+
+Para empezar con esto se limpió la base de datos para omitir los NAs, también se utilizó la distancia de Gower dado que en la base de datos se cuenta con variables de distintos tipos.
+```{r}
+df_limpio<-ejercicio2 %>%
+  na.omit() %>%
+  mutate(across(c(R_health,R_happy,R_region,R_edu)))
+dis_gow<-daisy(df_limpio,metric="gower")
+```
+
+Para realizar el árbol se utilizó el método Ward.D2 para evitar el encadenamiento y para compactar el árbol. 
+```{r}
+hc_arbol<-hclust(dis_gow,method="ward.D2")
+plot(hc_arbol,main="tipos de mujeres",labels=F)
+rect.hclust(hc_arbol, k=5, border="red")
+```
+
+De acuerdo al resultado se observaron 5 grupos los cuales fueron remarcados con la función rect.hclust
+
+```{r}
+grupitos<-cutree(hc_arbol, k=5)
+ej4final<- cbind(df_limpio, Cluster=as.factor(grupitos))
+```
+
+Esto se realiza con el fin de etiquetar cada mujer dentro de 1 de los 5 grupos.
+```{r}
+perfil_prom<-aggregate(cbind(R_age, R_income,R_height as.numeric(R_health)) ~ Cluster, 
+                       data = ej4final, 
+                       FUN = mean, na.rm = TRUE)
+conteos<-table(ej4final$Cluster)
+perfil_prom
+conteos
+```
+La función *aggregate* agrupa a cada mujer dentro de su cluster correspondiente y calcula su promedio de edad, ingresos, altura y salud.
+El objeto *perfil_prom* te da como resultado una tabla donde puedes ver los 5 clusters así como las variables de edad, ingresos, altura y salud con cada uno de sus promedios, mientras que el objeto *conteos* se trata de cuantas mujeres están dentro de estos grupos. 
+
+
+## **Ejercicio 3**
+```{r,echo=FALSE}
+data("skulls")
+view(skulls)
+calaveras<-skulls
+```
+
+Para este ejercicio se hará un MANOVA, lo que nos pide es determinar si a través de las 5 épocas hubo algún cambio en las medidas craneales para determinar si eso basta como evidencia de que existió el mestizaje.\
+Se hizo un MANOVA porque realizar un ANOVA para cada variable aumentaría la probabilidad de cometer un error tipo 1, por lo que el manova nos permite realizar múltiples pruebas en una línea.\
+Primero se hace un análisis exploratorio.
+
+### **Resumen numérico y gráfico**
+```{r}
+tapply(calaveras,calaveras$epoch,summary)
+#normalidad
+tapply(calaveras$mb,calaveras$epoch,shapiro.test)
+tapply(calaveras$bh,calaveras$epoch,shapiro.test)
+tapply(calaveras$bl,calaveras$epoch,shapiro.test)
+tapply(calaveras$nh,calaveras$epoch,shapiro.test)
+#summarySE
+library(Rmisc)
+summarySE(calaveras,measurevar="mb",groupvars="epoch")
+summarySE(calaveras,measurevar="bh",groupvars="epoch")
+summarySE(calaveras,measurevar="bl",groupvars="epoch")
+summarySE(calaveras,measurevar="nh",groupvars="epoch")
+
+```
+
+Aquí se puede observar que las medianas y medias son cercanas entre sí, además las pruebas de normalidad en todas no se rechaza la hipótesis nula, con dos excepciones y de igual manera las desviaciones estándar son muy cercanas entre si con todas las variables.\
+Para los boxplots, en todos los casos no se puede observar a simple vista alguna diferencia entre las variables, todos rangos se sobrelapan entre si al igual que las medianas. 
+```{r}
+boxplot(calaveras$bh~calaveras$epoch)
+boxplot(calaveras$mb~calaveras$epoch)
+boxplot(calaveras$bl~calaveras$epoch)
+boxplot(calaveras$nh~calaveras$epoch)
+```
+
+
+
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
