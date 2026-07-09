@@ -119,12 +119,18 @@ cosa
 
 
 #anovas
-tallos<-aov(tallo~agua*luz*fertilizante,data=garbanzo)
+tallos<-aov(tallo~agua*luz*fertilizante,data=garbanzosvivos)
 summary(tallos)
-hojasz<-aov(hojas~agua*luz*fertilizante,data=garbanzo)
+hojasz<-aov(hojas_si~agua*luz*fertilizante,data=garbanzosvivos)
 summary(hojasz)
-raices<-aov(raiz~agua*luz*fertilizante,data=garbanzo)
+raices<-aov(raiz~agua*luz*fertilizante,data=garbanzosvivos)
 summary(raices)
+
+shapiro.test(tallos$residuals)
+shapiro.test(hojasz$residuals)#esta no es normal
+hojasz1<-lm(hojas_si~agua+luz+fertilizante,data=garbanzosvivos)
+boxcox(hojasz1)
+shapiro.test(raices$residuals)
 
 durbinWatsonTest(tallos)
 durbinWatsonTest(hojasz)
@@ -134,8 +140,9 @@ garbanzosvivos$agua <- as.factor(garbanzosvivos$agua)
 garbanzosvivos$fertilizante <- as.factor(garbanzosvivos$fertilizante)
 garbanzosvivos$luz <- as.factor(garbanzosvivos$luz)
 
-leveneTest(tallo ~ agua * luz * fertilizante, data = garbanzosvivos)
-leveneTest(hojas ~ agua * luz * fertilizante, data = garbanzosvivos)
+library(car)
+leveneTest(tallo ~luz * fertilizante, data = garbanzosvivos)
+leveneTest(hojas_si ~luz * fertilizante, data = garbanzosvivos)
 leveneTest(raiz ~ agua * luz * fertilizante, data = garbanzosvivos)
 
 #LDA
@@ -150,6 +157,13 @@ library(MASS)
 mod_lda2<-lda(agua~tallo+raiz+fertilizante,data=garbanzo)
 mod_lda2
 plot(mod_lda2,dimen=1)
+mod_lda3<-lda(luz~tallo+raiz+hojas,data=garbanzosvivos)
+mod_lda3
+plot(mod_lda3)
+
+mod_lda4<-lda(fertilizante~tallo+raiz+hojas,data=garbanzosvivos)
+mod_lda4
+plot(mod_lda4)
 
 library(ggplot2)
 library(Rmisc)
@@ -172,11 +186,4 @@ ggplot(garbanzosvivos, aes(x = agua, y = tallo, color = fertilizante)) +
   labs(title = "Efecto de Luz, Agua y Fertilizante",
        x = "Agua", y = "Tallo (cm)")
 
-
-#PERMANOVA
-var_res<-cbind(garbanzosvivos$tallo,garbanzosvivos$hojas,garbanzosvivos$raiz)
-per_mano<-adonis2(cbind(garbanzosvivos$tallo, garbanzosvivos$hojas, garbanzosvivos$raiz)~agua*luz*fertilizante,
-                  data=garbanzosvivos,
-                  method="euclidean")
-per_mano
 
