@@ -1,0 +1,219 @@
+---
+title: "Examen 10 Julio"
+author: "David Zaid Flores Jiménez"
+date: "2026-07-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.	**¿Para qué se emplea un análisis de correlación canónica? ¿Cuáles son los supuestos de este análisis?** (2 punto)\
+Se usa cuando quieres relacionar dos conjuntos de variables, encontrar combinaciones que tengan la mayor correlación con el otro conjunto de variables.\
+Sus supuestos son que haya normalidad, linealidad, homogeneidad de varianzas y no multicolinealidad.\
+2.	**¿Qué tipos de análisis de conglomerados existen y en qué consisten?** (2 punto)
+
+Están los *jerarquicos* y los *no jerárquicos*, el primero hace un dendograma uniendo o diviendo casos, mientras que el segundo el analista define el número de grupos y así el algoritmo asigna los casos utilizando medidas como los centroides
+
+3.	**¿En qué se parecen y en qué son diferentes el Análisis de Discriminantes Lineal y el MANOVA?** (1 punto)\
+Los dos usan variables de respuesta continuas y una variable explicativa categórica, pero el MANOVA se usa para determinar si hay diferencias entre las medias de los grupos a analizar mientras que el análisis de discriminantes se usa principalmente para encontrar combinaciones de variable que clasifiquen los datos en grupos. 
+
+4.	**¿Para qué se emplea el Análisis de Componentes Principales? Y ¿Cuál es la diferencia con el análisis de factores?** (2 punto)\
+El PCA se usa para reducir las dimensiones, crea los componentes que son la combinación de las variables originales, todo esto para explicar la máxima varianza. Su diferencia con el análisis de factores es que el PCA busca explicar la varianza total mientras que el AF busca identificar variables latentes
+
+5.	**¿En qué consiste la regresión polinomial? Y ¿En qué casos puede emplearse este tipo de regresión?** (2 punto)
+
+Este se basa en añadir un término elevado a una potencia para poder ajustar una curva en vez de una línea, se usa cuando la relación entre *x* y *y* no es lineal. 
+
+6.	**¿Es la regresión polinomial un modelo lineal? ¿Por qué?** (1 punto)\
+Si se trata de un modelo lineal, porque los parámetros beta siguen siendo lineales, aquí los coeficientes se suman. 
+
+7.	**¿Qué indica la correlación?** (0.5 punto)\
+Esto indica la asocicación entre dos variables\
+
+8.	**¿Qué estadístico se emplea para probar la hipótesis de que la correlación es igual a cero?** (1 punto)\
+Se usa la prueba de t de Student\
+
+9.	**Si la variable no se distribuye normalmente o la variable es ordinal ¿qué tipo de correlación se usa?** (1 punto)\
+Si no se cumple la distribución normal se usa la correlación de Kendall.\
+
+10.	**¿En qué casos se emplea una regresión lineal?** (1 punto)\
+Se usa cuando lo que quieres hacer es predecir y modelar una variable respuesta numérica y te estás basando en 1 o más variables explicativas. 
+
+11.	**¿Cuáles son los supuestos de la regresión lineal y cómo se prueban?** (1 punto)\
+Los supuestos son que haya linealidad, que las relaciones entre las variables sean lineales, que haya independencia de los datos y esto se prueba con la prueba de Durbin Watson, que los residuales del modelo tengan distribución normal (Prueba de Shapiro), y que haya homogeneidad de varianzas.
+
+12.	**¿Qué se puede hacer si no se cumplen los supuestos?** (1 punto)\
+Se puede hacer una transformación de los datos utilizando boxCox para saber que valor ajusta mejor y así poder transformarlos usando raíz cuadrada, logaritmos, etc.
+
+13.	**¿Qué significan los coeficientes (pendientes) en la regresión lineal?** (1 punto)\
+Es una tasa de cambio, representan el cambio esperado en *y* por cada unidad que aumenta *x*.
+
+14.	**¿Por qué el intervalo de confianza para la predicción es más grande que para la estimación?** (1 punto)\
+Porque la predicción considera dos fuentes de incertidumbre, la del modelo además de la variabilidad natural mientras que la estimación solo considera la incertidumbre del modelo. 
+
+15.	**¿Qué significa la R2?** (1 punto)\
+Se trata de un coeficiente el cual nos dice el ajuste del modelo a los datos registrados, nos dice que tan bien se ajusta el modelo a los datos, mientras más cercano a 1 mejor.
+
+16.	**¿Cuál es el objetivo de la regresión por pasos?** (1 punto)\
+Seleccionar el mejor subconjunto de variables explicativas para el modelo y elimina todas aquellas que no tienen un efecto significativo. 
+
+17.	**¿Cómo puede evaluar diferentes modelos?** (1 punto)\
+Se puede comparar algunos coeficientes o índices como el valor de Akaike o la R^2 ajustada. 
+
+18.	**¿En qué se parecen el ANOVA y la regresión?** (1 punto)\
+Se parecen en que ambos son modelos lineales generales
+
+19.	**¿En qué casos debe usarse un modelo lineal general?** (1 punto)\
+Cuando hay una combinación de variables de varios tipos ya sean numéricas o categóricas y se quiere anlizar la varianza de una variable explicativa numérica.
+
+20.	**¿Qué es la devianza?** (1 punto)\
+Es una medida que te da información sobre que tan mal se ajustael modelo a los datos, mientras tenga un valor más pequeño eso significa que hay un peor ajuste.
+
+21.	**La serie de datos “wu.csv” contiene información de variables de química de suelo de 300 sitios. Se midió la concentración de Ca, Cd, Cr, Cu, Fe, Mg, Mn, Ni, Pb y Zn, además del pH, N. P, K y concentración de carbono orgánico (soc). Los sitios están clasificados como “orchard”, “dry land” y “paddy field”. Se quiere saber el patrón químico de cada tipo de sitio. Justifica la selección del método que emplees. Asegúrate de realizar un análisis exploratorio de las variables y de verificar los supuestos del modelo que emplees.** (20 puntos)\
+Aquí se tiene que realizar un MANOVA además de un análisis de discriminantes justamente porque el objetivo del análisis es identificar un patrón, es decir clasificar, además el MANOVA sirve para evitar aumentar la probabilidad del error tipo 1 al hacer muchos ANOVAS, entonces el manova en este caso sirve para confirmar o desechar la hipótesis de que los grupos son diferentes y el análisis de discriminantes srive para saber que elementos químicos son los que mejor separan a los sitios estudiados. 
+
+```{r,echo=FALSE}
+library(tidyverse)
+library(MASS) 
+library(car)  
+library(GGally)
+library(biotools)
+library(Rmisc)
+library(plyr)
+library(MVN)
+library(dplyr)
+library(vegan)
+library(lavaan)
+wu<-read.csv("C:/Users/100032608/Downloads/wu.csv")
+```
+### Resumen numérico
+
+```{r}
+summary(wu)
+ggpairs(wu)
+wu %>%
+  pivot_longer(cols = ca:p, names_to = "variable", values_to = "valor") %>%
+  ggplot(aes(x = landuse, y = valor, fill = group)) +
+  geom_boxplot() +
+  facet_wrap(~variable, scales = "free") +
+  theme_minimal() +
+  labs(title = "Distribución de variables químicas por tipo de sitio")
+```
+
+Como se puede observar en los boxplots, no hay una diferencia muy marcada entre los tipos de suelo.
+```{r}
+wu_log <- wu%>%
+  mutate(across(ca:p,~log1p(.)))
+boxM(wu_log[, 1:15],wu_log$landuse)
+cor(wu_log[,1:15])
+vif(lm(ca~cd+cr+cu+fe+mg+mn+ni+pb+zn+ph+n+p+k+soc,data=wu_log))
+```
+
+Ninguno de los supuestos se cumple aún haciendo una transformación logarítmica, no hay homogeneidad de varianzas y existe multicolinearidad lo que indica que los datos no son independientes entre si. 
+```{r}
+mano_vita<-manova(cbind(ca,cr,cu,fe,mn,pb,zn,cd,mg,ni,soc,ph,n,k,p)~landuse,data=wu_log)
+summary(mano_vita,test="Pillai")
+summary.aov(mano_vita)
+shapiro.test(mano_vita$residuals)
+```
+Se usa la traza de Pillai dado que ninguno de los supuestos se cumple para los datos y de igual forma los residuales no tienen una distribución normal. 
+```{r}
+lda_ita<-lda(landuse~cbind(ca,cr,cu,fe,mn,pb,zn,cd,mg,ni,soc,ph,n,k,p),data=wu_log)
+lda_ita
+```
+El Análisis de discriminantes nos da como resultado una reducción a 2 ejes con los cuales se puede explicar un 90% de la variación aproximadamente, en ambos ejes se puede observar un valor alto en minerales como el magnesio lo que puede indicar que están usando esta variable para discriminar entre sitios teniendo lugares ricos en magnesio, para el LD1 además del magnesio, el plomo y niquel tienen un valor más alto y de igual manera el cobre y el potasio sirven como minerales diferenciadores teniendo suelos ricos en magnesio, plomo y niquel con los valores más alto, por otro lado el LD2 cuenta con indicadores negativos como el *soc* y potasio los cuales al menos en el caso del carbono puede ser un indicador de fertilidad en el suelo.
+```{r}
+library(ggplot2)
+predicciones <- predict(lda_ita, wu_log)
+plot_data <- data.frame(LD1 = predicciones$x[,1], 
+                        LD2 = predicciones$x[,2], 
+                        landuse = wu_log$landuse)
+ggplot(plot_data, aes(x = LD1, y = LD2, color = landuse)) +
+  geom_point(size = 3, alpha = 0.6) +
+  stat_ellipse(level = 0.95) +
+  theme_minimal() +
+  labs(title = "Patrón Químico",
+       x = "LD1 aprox 50% de la varianza",
+       y = "LD2 aprox 40% de la varianza")
+```
+
+
+
+
+22.	**Se realizó un estudio detallado de diversas comunidades bióticas en estanques artificiales (“lemminvert2.csv). Se muestraron 23 estanques que representaban diferentes tipos de gestión, una combinación de estrategias de piscicultura (sin peces (nf), cría de juveniles (yf), gestión de baja intensidad (li), ausencia de gestión (nm)) y frecuencias de vaciado. Asimismo, se cuantificó la abundancia macroinvertebrados. Determina que tan semejantes son los estanques y que relación guardan con el tipo de manejo. Recuerda que una tabla de abundancias puede verse como una tabla de contingencias. Justifica la selección del método que emplees. Asegúrate de realizar un análisis exploratorio de las variables y de verificar los supuestos del modelo que emplees.** (20 puntos)\
+Se hace un análisis de correspondencias canónico porque va a permitir relacionar la composición de especies en base a las observaciones con las variables del manejo de los lugares, como los datos son observaciones y registro de especies no cumplen con una distribución normal. 
+```{r,echo=FALSE}
+lemin<-read.csv("C:/Users/100032608/Downloads/lemminvert2.csv")
+
+```
+
+```{r}
+tapply(lemin,lemin$manag,summary)
+abundancias<-lemin[,4:32]
+lemin$TotalAbund <- rowSums(abundancias)
+boxplot(TotalAbund ~ manag, data = lemin, 
+        main = "Distribución de Abundancia Total por Gestión",
+        xlab = "Tipo de Gestión", ylab = "Abundancia Total",
+        col = c("steelblue", "darkcyan", "seagreen", "yellowgreen"))
+```
+Los boxplots muestran que el grupo de nf es un poco más diferente a los otros 3, los cuales son muy parecidos entre si. 
+
+```{r}
+canon<-cca(abundancias~manag,data=lemin)
+anova(canon)
+summary(canon)
+```
+El anova nos indica que si existe una diferencia entre los manejos, sin embargo, esta es apenas significativa con su valor de 0.04, por otra parte el resumen del análisis de correlación canónica nos indica que aproximadamente el 24% de las diferencias entre los estanques se dan por el tipo de manejo y por otra parte el 75% de estas diferencias son naturales, es la variabilidad natural que existe dentro de estos estanques.\
+Además con el CCA1 y CCA2 juntos explican aproximadamente el 86% de las diferencias. 
+```{r}
+plot(canon, display = c("species", "sites"), type = "text")
+```
+Lo que este gráfico muestra son los estanques representados con números negros mientras que las especies están con letras rojas. Aquí se pueden observar algunas agrupaciones como por ejemplo los estanques 9-23-2-20-5-14, 21-3-22, 15-1-13-18 y 12-16. 
+```{r}
+plot(canon, type = "n")
+points(canon, display = "sites", pch = 21, bg = "gray")
+text(canon, display = "species", col = "red", cex = 0.7)
+text(canon, display = "bp", col = "blue", cex = 1.2, font = 2)
+```
+Lo que muestra el gráfico es basicamente lo mismo que el pasado pero esta vez los puntos grises son los estanques, las letras rojas son las especies y esta vez se integran los tipos de manejo en la gráfica. 
+
+
+
+23.	**La «Teoría de la conducta planificada» es una teoría sobre por qué las personas realizan actividad física. La serie de datos “SEM.txt” reúne información sobre componentes relacionadas a la voluntad de hacer ejercicio. Las actitudes se refieren al grado en que una persona tiene una opinión favorable sobre hacer ejercicio; las normas subjetivas se refieren a si considera que otras personas, cuyas opiniones valora, creen que el ejercicio es algo positivo; y el control conductual percibido se refiere al grado en que considera que realizar ejercicio está bajo su control. Las intenciones se refieren a si una persona tiene la intención de hacer ejercicio, y la conducta es una medida del grado en que efectivamente lo realizó. Cada constructo se mide mediante cuatro ítems. Construye un modelo de ecuaciones estructurales para medir que relación tienen las variables endógenas y exógenas.** (25puntos)
+
+Para esto se tiene que hacer un modelo de ecuaciones estructurales
+```{r}
+sem1<-read.table("C:/Users/100032608/Downloads/SEM_1.txt",header=TRUE)
+summary(sem1)
+```
+
+```{r,include=FALSE}
+mvn(sem1)
+cor(sem1)
+```
+Los supuestos se cumplen, los datos se distribuyen de manera normal y las correlaciones parecen ser no tan fuertes.
+
+```{r}
+tpb_model <- '
+  Actitud =~ attitude1 + attitude2 + attitude3 + attitude4
+  SN      =~ SN1 + SN2 + SN3 + SN4
+  PBC     =~ PBC1 + PBC2 + PBC3 + PBC4
+  Int     =~ int1 + int2 + int3 + int4 + int5
+  Conducta =~ beh1 + beh2 + beh3 + beh4
+
+  Int ~ Actitud + SN + PBC
+  Conducta ~ Int + PBC
+'
+fit <- sem(tpb_model, data = sem1)
+summary(fit, standardized = TRUE, fit.measures = TRUE)
+
+
+```
+
+
+Con el resumen del modelo muestra un valor de CFI mayor a 0.9 lo cual significa que tiene un buen ajuste a los datos, de igual manera el RMSEA es menor a 0.08 lo cual significa que no hay diferencias notables entre el modelo y los datos observados.\
+Con las variables latentes todas tienen un valor de p igual a 0 lo que significa que está bien.\
+En las regresiones, los valores de p son iguales a 0 lo que indica que son resultados significativos.
+
